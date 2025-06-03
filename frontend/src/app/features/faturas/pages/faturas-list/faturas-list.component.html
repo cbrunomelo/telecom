@@ -1,0 +1,77 @@
+<div class="container mt-4">
+  <h2>Faturas</h2>
+
+  <button class="btn btn-primary mb-3" routerLink="novo">Nova Fatura</button>
+  
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <app-card
+        title="Total de Faturas"
+        [value]="totalItems"
+        icon="description"
+        color="primary"
+      ></app-card>
+    </div>
+    <div class="col-md-4">
+      <app-card
+        title="Faturas Pagas"
+        [value]="getFaturasPorStatus(StatusFatura.PAGA)"
+        icon="check_circle"
+        [trend]="calcularTrendPagas()"
+        color="success"
+      ></app-card>
+    </div>
+    <div class="col-md-4">
+      <app-card
+        title="Faturas Atrasadas"
+        [value]="getFaturasPorStatus(StatusFatura.ATRASADA)"
+        icon="warning"
+        [trend]="calcularTrendAtrasadas()"
+        color="danger"
+      ></app-card>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Número</th>
+          <th>Vencimento</th>
+          <th>Valor</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let fatura of faturas">
+          <td>{{ fatura.numeroFatura }}</td>
+          <td>{{ fatura.dataVencimento | date:'dd/MM/yyyy' }}</td>
+          <td>{{ fatura.valor | currency:'BRL' }}</td>
+          <td>
+            <span [class]="getStatusClass(fatura.status)">
+              {{ fatura.status }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-info me-2" [routerLink]="['editar', fatura.id]">
+              Editar
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="confirmarExclusao(fatura)">
+              Excluir
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <mat-paginator
+      [length]="totalItems"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [pageIndex]="currentPage - 1"
+      (page)="onPageChange($event)"
+      aria-label="Selecione a página">
+    </mat-paginator>
+  </div>
+</div> 

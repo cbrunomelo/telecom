@@ -1,0 +1,17 @@
+.form-control.ng-invalid.ng-touched,
+.form-select.ng-invalid.ng-touched {
+  border-color: var(--bs-danger);
+}
+
+.invalid-feedback {
+  display: block;
+}
+
+.input-group {
+  .form-control.ng-invalid.ng-touched {
+    border-color: var(--bs-danger);
+    &:focus {
+      box-shadow: 0 0 0 0.25rem rgba(var(--bs-danger-rgb), 0.25);
+    }
+  }
+} 

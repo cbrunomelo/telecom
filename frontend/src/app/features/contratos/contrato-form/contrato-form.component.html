@@ -1,0 +1,119 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h2>{{ isEditing ? 'Editar' : 'Novo' }} Contrato</h2>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="contratoForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6">
+            <app-text-input
+              [formControl]="$any(contratoForm.controls.nomeFilial)"
+              label="Nome da Filial"
+              placeholder="Digite o nome da filial"
+              [errorMessage]="contratoForm.controls.nomeFilial.errors?.['required'] && contratoForm.controls.nomeFilial.touched ? 'Nome da filial é obrigatório' : ''"
+              icon="building"
+            ></app-text-input>
+          </div>
+          <div class="col-md-6">
+            <app-text-input
+              [formControl]="$any(contratoForm.controls.numero)"
+              label="Número do Contrato"
+              placeholder="Digite o número do contrato"
+              [errorMessage]="contratoForm.controls.numero.errors?.['required'] && contratoForm.controls.numero.touched ? 'Número do contrato é obrigatório' : ''"
+              icon="file-contract"
+            ></app-text-input>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <app-select-input
+              [formControl]="$any(contratoForm.controls.operadoraId)"
+              label="Operadora"
+              placeholder="Selecione uma operadora"
+              [options]="(operadorasOptions$ | async) ?? []"
+              [errorMessage]="contratoForm.controls.operadoraId.errors?.['required'] && contratoForm.controls.operadoraId.touched ? 'Operadora é obrigatória' : ''"
+              icon="broadcast-tower"
+            ></app-select-input>
+          </div>
+          <div class="col-md-6">
+            <app-text-input
+              [formControl]="$any(contratoForm.controls.planoContratado)"
+              label="Plano Contratado"
+              placeholder="Digite o plano contratado"
+              [errorMessage]="contratoForm.controls.planoContratado.errors?.['required'] && contratoForm.controls.planoContratado.touched ? 'Plano contratado é obrigatório' : ''"
+              icon="file-contract"
+            ></app-text-input>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <app-date-input
+              [formControl]="$any(contratoForm.controls.dataInicio)"
+              label="Data de Início"
+              [errorMessage]="contratoForm.controls.dataInicio.errors?.['required'] && contratoForm.controls.dataInicio.touched ? 'Data de início é obrigatória' : ''"
+            ></app-date-input>
+          </div>
+          <div class="col-md-6">
+            <app-date-input
+              [formControl]="$any(contratoForm.controls.dataFim)"
+              label="Data de Fim"
+              [errorMessage]="contratoForm.controls.dataFim.errors?.['required'] && contratoForm.controls.dataFim.touched ? 'Data de fim é obrigatória' : ''"
+            ></app-date-input>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <app-date-input
+              [formControl]="$any(contratoForm.controls.dataVencimento)"
+              label="Data de Vencimento"
+              [errorMessage]="contratoForm.controls.dataVencimento.errors?.['required'] && contratoForm.controls.dataVencimento.touched ? 'Data de vencimento é obrigatória' : ''"
+            ></app-date-input>
+          </div>
+          <div class="col-md-6">
+            <app-currency-input
+              [formControl]="$any(contratoForm.controls.valorMensal)"
+              label="Valor Mensal"
+              [errorMessage]="contratoForm.controls.valorMensal.errors?.['required'] ? 'Valor mensal é obrigatório' : contratoForm.controls.valorMensal.errors?.['min'] ? 'Valor deve ser maior que zero' : ''"
+            ></app-currency-input>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <app-select-input
+              [formControl]="$any(contratoForm.controls.status)"
+              label="Status"
+              placeholder="Selecione um status"
+              [options]="statusOptions"
+              [errorMessage]="contratoForm.controls.status.errors?.['required'] && contratoForm.controls.status.touched ? 'Status é obrigatório' : ''"
+              icon="info-circle"
+            ></app-select-input>
+          </div>
+          <div class="col-md-6">
+            <app-select-input
+              [formControl]="$any(contratoForm.controls.tipo)"
+              label="Tipo"
+              placeholder="Selecione o tipo"
+              [options]="tipoOptions"
+              [errorMessage]="contratoForm.controls.tipo.errors?.['required'] && contratoForm.controls.tipo.touched ? 'Tipo é obrigatório' : ''"
+              icon="tag"
+            ></app-select-input>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-primary" [disabled]="contratoForm.invalid">
+            {{ isEditing ? 'Atualizar' : 'Cadastrar' }}
+          </button>
+          <button type="button" class="btn btn-secondary" routerLink="/contratos">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

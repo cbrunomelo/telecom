@@ -1,0 +1,19 @@
+<div class="input-container">
+  <label *ngIf="label">{{ label }}</label>
+  <div class="input-wrapper">
+    <input
+      type="date"
+      [placeholder]="placeholder"
+      [(ngModel)]="displayValue"
+      (ngModelChange)="onInputChange($event)"
+      (blur)="onBlur()"
+      [min]="minDate"
+      [max]="maxDate"
+      [disabled]="disabled"
+    />
+    <i class="fas fa-calendar"></i>
+  </div>
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div> 

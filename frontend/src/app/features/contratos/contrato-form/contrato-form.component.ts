@@ -1,0 +1,168 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
+import { ContratoService } from '../../../core/services/contrato.service';
+import { OperadoraService } from '../../../core/services/operadora.service';
+import { Operadora } from '../../../shared/models/operadora.model';
+import { Contrato, StatusContrato } from '../../../shared/models/contrato.model';
+import { TextInputComponent } from '../../../shared/inputs/text-input/text-input.component';
+import { SelectInputComponent } from '../../../shared/inputs/select-input/select-input.component';
+import { DateInputComponent } from '../../../shared/inputs/date-input/date-input.component';
+import { CurrencyInputComponent } from '../../../shared/inputs/currency-input/currency-input.component';
+
+interface SelectOption {
+  label: string;
+  value: any;
+}
+
+@Component({
+  selector: 'app-contrato-form',
+  templateUrl: './contrato-form.component.html',
+  styleUrls: ['./contrato-form.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    MatSnackBarModule,
+    TextInputComponent,
+    SelectInputComponent,
+    DateInputComponent,
+    CurrencyInputComponent
+  ]
+})
+export class ContratoFormComponent implements OnInit {
+  contratoForm = this.formBuilder.group({
+    nomeFilial: ['', Validators.required],
+    numero: ['', Validators.required],
+    operadoraId: [0, Validators.required],
+    planoContratado: ['', Validators.required],
+    dataInicio: ['', Validators.required],
+    dataFim: [''],
+    dataVencimento: ['', Validators.required],
+    valorMensal: [0, [Validators.required, Validators.min(0)]],
+    status: [StatusContrato.ATIVO, Validators.required],
+    tipo: ['INTERNET' as 'INTERNET' | 'TELEFONIA' | 'TV', Validators.required]
+  });
+
+  operadoras$: Observable<Operadora[]>;
+  operadorasOptions$: Observable<SelectOption[]>;
+  
+  statusOptions: SelectOption[] = Object.values(StatusContrato).map(status => ({
+    label: status,
+    value: status
+  }));
+
+  tipoOptions: SelectOption[] = [
+    { label: 'Internet', value: 'INTERNET' },
+    { label: 'Telefonia', value: 'TELEFONIA' },
+    { label: 'TV', value: 'TV' }
+  ];
+
+  isEditing = false;
+  contratoId: number | null = null;
+
+  constructor(
+    private formBuilder: NonNullableFormBuilder,
+    private contratoService: ContratoService,
+    private operadoraService: OperadoraService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar
+  ) {
+    this.operadoras$ = this.operadoraService.getAll();
+    this.operadorasOptions$ = this.operadoras$.pipe(
+      map(operadoras => operadoras.map(operadora => ({
+        label: `${operadora.nome} - ${operadora.tipoServico}`,
+        value: operadora.id || 0
+      })))
+    );
+  }
+
+  ngOnInit(): void {
+    this.route.params.pipe(
+      map(params => params['id']),
+      switchMap(id => {
+        if (id) {
+          this.isEditing = true;
+          this.contratoId = +id;
+          return this.contratoService.getById(+id);
+        }
+        return of(null);
+      })
+    ).subscribe(contrato => {
+      if (contrato) {
+        this.contratoForm.patchValue({
+          nomeFilial: contrato.nomeFilial,
+          numero: contrato.numero,
+          operadoraId: contrato.operadoraId,
+          planoContratado: contrato.planoContratado,
+          dataInicio: this.formatDateForInput(contrato.dataInicio),
+          dataFim: contrato.dataFim ? this.formatDateForInput(contrato.dataFim) : '',
+          dataVencimento: this.formatDateForInput(contrato.dataVencimento),
+          valorMensal: contrato.valorMensal,
+          status: contrato.status,
+          tipo: contrato.tipo
+        });
+      }
+    });
+  }
+
+  onSubmit(): void {
+    if (this.contratoForm.valid) {
+      const formValue = this.contratoForm.getRawValue();
+      const contrato: Partial<Contrato> = {
+        ...formValue,
+        dataInicio: new Date(formValue.dataInicio),
+        dataFim: formValue.dataFim ? new Date(formValue.dataFim) : undefined,
+        dataVencimento: new Date(formValue.dataVencimento)
+      };
+
+      const action = this.isEditing
+        ? this.contratoService.update(this.contratoId!, contrato)
+        : this.contratoService.create(contrato);
+
+      action.subscribe({
+        next: () => {
+          this.snackBar.open(
+            this.isEditing ? 'Contrato atualizado com sucesso' : 'Contrato criado com sucesso',
+            'Fechar',
+            {
+              duration: 3000,
+              horizontalPosition: 'end',
+              panelClass: ['success-snackbar']
+            }
+          );
+          this.router.navigate(['/contratos']);
+        },
+        error: () => {
+          this.snackBar.open(
+            this.isEditing ? 'Erro ao atualizar contrato' : 'Erro ao criar contrato',
+            'Fechar',
+            {
+              duration: 3000,
+              horizontalPosition: 'end',
+              panelClass: ['error-snackbar']
+            }
+          );
+        }
+      });
+    } else {
+      this.snackBar.open('Por favor, preencha todos os campos obrigatórios', 'Fechar', {
+        duration: 3000,
+        horizontalPosition: 'end',
+        panelClass: ['error-snackbar']
+      });
+    }
+  }
+
+  private formatDateForInput(date: Date): string {
+    const d = new Date(date);
+    return d.toISOString().split('T')[0];
+  }
+} 

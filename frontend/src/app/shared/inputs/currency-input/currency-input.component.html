@@ -1,0 +1,17 @@
+<div class="input-container">
+  <label *ngIf="label">{{ label }}</label>
+  <div class="input-wrapper">
+    <input
+      type="text"
+      [placeholder]="placeholder"
+      [(ngModel)]="displayValue"
+      (ngModelChange)="onInputChange($event)"
+      (blur)="onBlur()"
+      [disabled]="disabled"
+    />
+    <i class="fas fa-money-bill-wave"></i>
+  </div>
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div> 

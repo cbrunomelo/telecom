@@ -1,0 +1,76 @@
+<div class="container mt-4">
+  <h2>Operadoras</h2>
+  <button class="btn btn-primary mb-3" routerLink="novo">Nova Operadora</button>
+  
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <app-card
+        title="Total de Operadoras"
+        [value]="operadoras.length"
+        icon="business"
+        color="primary"
+      ></app-card>
+    </div>
+    <div class="col-md-4">
+      <app-card
+        title="Operadoras Ativas"
+        [value]="getOperadorasAtivas()"
+        icon="check_circle"
+        [trend]="calcularTrendAtivas()"
+        color="success"
+      ></app-card>
+    </div>
+    <div class="col-md-4">
+      <app-card
+        title="Tipos de Serviço"
+        [value]="operadoras.length"
+        icon="settings_input_antenna"
+        color="info"
+      ></app-card>
+    </div>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Tipo de Serviço</th>
+        <th>Contato Suporte</th>
+        <th>Data Cadastro</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let operadora of operadoras">
+        <td>{{ operadora.nome }}</td>
+        <td>{{ operadora.tipoServico }}</td>
+        <td>{{ operadora.contatoSuporte }}</td>
+        <td>{{ operadora.dataCadastro | date:'dd/MM/yyyy' }}</td>
+        <td>
+          <span [class]="getStatusClass(operadora.status)">
+            {{ operadora.status }}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-info me-2" [routerLink]="['editar', operadora.id]">
+            Editar
+          </button>
+          <button class="btn btn-sm btn-danger" (click)="confirmarExclusao(operadora)">
+            Excluir
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <mat-paginator
+    [length]="totalItems"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions"
+    [pageIndex]="currentPage - 1"
+    (page)="onPageChange($event)"
+    aria-label="Selecione a página"
+    class="mat-elevation-z1">
+  </mat-paginator>
+</div> 

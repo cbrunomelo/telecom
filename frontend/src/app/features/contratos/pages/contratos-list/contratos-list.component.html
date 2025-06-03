@@ -1,0 +1,76 @@
+<div class="container mt-4">
+  <h2>Contratos</h2>
+  <button class="btn btn-primary mb-3" routerLink="novo">Novo Contrato</button>
+  
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <app-card
+        title="Total de Contratos"
+        [value]="contratos.length"
+        icon="description"
+        color="primary"
+      ></app-card>
+    </div>
+    <div class="col-md-4">
+      <app-card
+        title="Contratos Ativos"
+        [value]="getContratosAtivos()"
+        icon="check_circle"
+        [trend]="calcularTrendAtivos()"
+        color="success"
+      ></app-card>
+    </div>
+    <div class="col-md-4">
+      <app-card
+        title="Valor Total Mensal"
+        [value]="calcularValorTotalMensal()"
+        icon="attach_money"
+        color="info"
+      ></app-card>
+    </div>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Filial</th>
+        <th>Data Início</th>
+        <th>Data Fim</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let contrato of contratos">
+        <td>{{ contrato.id }}</td>
+        <td>{{ contrato.nomeFilial }}</td>
+        <td>{{ contrato.dataInicio | date:'dd/MM/yyyy' }}</td>
+        <td>{{ contrato.dataFim | date:'dd/MM/yyyy' }}</td>
+        <td>
+          <span [class]="getStatusClass(contrato.status)">
+            {{ contrato.status }}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-info me-2" [routerLink]="['editar', contrato.id]">
+            Editar
+          </button>
+          <button class="btn btn-sm btn-danger" (click)="confirmarExclusao(contrato)">
+            Excluir
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Paginador -->
+  <mat-paginator
+    [length]="totalItems"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions"
+    [pageIndex]="currentPage - 1"
+    (page)="onPageChange($event)"
+    aria-label="Selecione a página">
+  </mat-paginator>
+</div> 

@@ -1,0 +1,39 @@
+# ─────────────────────────────
+# Angular
+# ─────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.angular/cache/
+frontend/.vscode/
+frontend/.idea/
+frontend/*.log
+frontend/.env
+frontend/.env.*
+
+# ─────────────────────────────
+# .NET
+# ─────────────────────────────
+**/bin/
+**/obj/
+**/out/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+backend/.vscode/
+backend/.idea/
+*.dll
+*.exe
+*.pdb
+*.log
+**/publish/
+**/appsettings.*.json
+backend/.env
+backend/.env.*
+
+# ─────────────────────────────
+# Sistema
+# ─────────────────────────────
+.DS_Store
+Thumbs.db

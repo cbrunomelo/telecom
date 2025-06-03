@@ -1,0 +1,34 @@
+<div class="dashboard-filters">
+  <form [formGroup]="filterForm" class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">Período</label>
+      <select class="form-select" formControlName="periodo">
+        <option value="30">Últimos 30 dias</option>
+        <option value="60">Últimos 60 dias</option>
+        <option value="90">Últimos 90 dias</option>
+        <option value="180">Últimos 6 meses</option>
+        <option value="365">Último ano</option>
+      </select>
+    </div>
+    
+    <div class="col-md-4">
+      <label class="form-label">Operadora</label>
+      <select class="form-select" formControlName="operadoraId">
+        <option value="">Todas</option>
+        <option *ngFor="let operadora of operadoras" [value]="operadora.id">
+          {{ operadora.nome }}
+        </option>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Status</label>
+      <select class="form-select" formControlName="status">
+        <option value="">Todos</option>
+        <option *ngFor="let status of statusOptions" [value]="status">
+          {{ status }}
+        </option>
+      </select>
+    </div>
+  </form>
+</div> 

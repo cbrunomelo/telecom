@@ -1,0 +1,27 @@
+<div class="input-container">
+  <label *ngIf="label">{{ label }}</label>
+  <div class="input-wrapper">
+    <textarea
+      *ngIf="rows"
+      [rows]="rows"
+      [placeholder]="placeholder"
+      [(ngModel)]="value"
+      (ngModelChange)="handleChange($event)"
+      (blur)="handleBlur()"
+      [disabled]="disabled"
+    ></textarea>
+    <input
+      *ngIf="!rows"
+      [type]="type"
+      [placeholder]="placeholder"
+      [(ngModel)]="value"
+      (ngModelChange)="handleChange($event)"
+      (blur)="handleBlur()"
+      [disabled]="disabled"
+    />
+    <i *ngIf="icon" class="fas fa-{{ icon }}"></i>
+  </div>
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div> 

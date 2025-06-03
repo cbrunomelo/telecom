@@ -1,0 +1,16 @@
+services:
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: telecom-frontend
+    ports:
+      - "4200:80"
+    restart: unless-stopped
+    networks:
+      - telecom-network
+
+networks:
+  telecom-network:
+    name: telecom-network
+    driver: bridge 

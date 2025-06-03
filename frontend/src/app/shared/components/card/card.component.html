@@ -1,0 +1,13 @@
+<div class="dashboard-card" [class]="'card-' + (color || 'primary')">
+  <div class="card-header">
+    <h3 class="card-title">{{ title }}</h3>
+    <mat-icon *ngIf="icon" class="header-icon">{{ icon }}</mat-icon>
+  </div>
+  <div class="card-content">
+    <div class="value">{{ value | number }}</div>
+    <div class="trend" *ngIf="trend !== 0" [class.positive]="trend > 0" [class.negative]="trend < 0">
+      <mat-icon class="trend-icon">{{ trend > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+      {{ trend }}%
+    </div>
+  </div>
+</div> 

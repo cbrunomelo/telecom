@@ -1,0 +1,64 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h2>Dashboard</h2>
+    <app-dashboard-filters (filtersChanged)="onFiltersChanged($event)"></app-dashboard-filters>
+  </div>
+
+  <div class="row g-4">
+    <!-- Cards -->
+    <div class="col-md-3">
+      <app-card
+        title="Total de Faturas"
+        [value]="dashboardData?.totalFaturas || 0"
+        icon="receipt"
+        [trend]="5"
+        color="primary">
+      </app-card>
+    </div>
+    <div class="col-md-3">
+      <app-card
+        title="Valor Total Faturado"
+        [value]="dashboardData?.valorTotalFaturado || 0"
+        icon="payments"
+        [trend]="-2"
+        color="info">
+      </app-card>
+    </div>
+    <div class="col-md-3">
+      <app-card
+        title="Faturas Pendentes"
+        [value]="dashboardData?.faturasStatus?.pendentes || 0"
+        icon="pending"
+        [trend]="0"
+        color="warning">
+      </app-card>
+    </div>
+    <div class="col-md-3">
+      <app-card
+        title="Faturas Atrasadas"
+        [value]="dashboardData?.faturasStatus?.atrasadas || 0"
+        icon="warning"
+        [trend]="8"
+        color="danger">
+      </app-card>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="col-md-4">
+      <app-dashboard-chart
+        title="Distribuição por Status"
+        chartType="pie"
+        [chartData]="pieChartData"
+        [chartOptions]="pieChartOptions">
+      </app-dashboard-chart>
+    </div>
+    <div class="col-md-8">
+      <app-dashboard-chart
+        title="Evolução Mensal"
+        chartType="bar"
+        [chartData]="barChartData"
+        [chartOptions]="barChartOptions">
+      </app-dashboard-chart>
+    </div>
+  </div>
+</div> 

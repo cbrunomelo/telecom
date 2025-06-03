@@ -1,0 +1,142 @@
+.dialog-container {
+  min-width: 320px;
+  max-width: 400px;
+  padding: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.dialog-header {
+  background: #ffebee;
+  padding: 24px 0;
+  text-align: center;
+}
+
+.icon-wrapper {
+  background: white;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.warning-icon {
+  color: #f44336;
+  font-size: 32px !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-content {
+  padding: 24px 24px 8px;
+  text-align: center;
+}
+
+h2 {
+  margin: 0 0 16px;
+  font-size: 20px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.message {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.dialog-actions {
+  padding: 8px 24px 24px;
+  justify-content: center;
+  gap: 12px;
+}
+
+.cancel-button {
+  min-width: 100px;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 25px !important;
+  padding: 6px 24px !important;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+}
+
+.confirm-button {
+  min-width: 100px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #dc3545 !important;
+  color: white !important;
+  transition: all 0.3s ease;
+  border-radius: 25px !important;
+  padding: 6px 24px !important;
+
+  &:hover {
+    background-color: #c82333 !important;
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.4);
+  }
+
+  &:active {
+    background-color: #bd2130 !important;
+    transform: translateY(1px);
+  }
+
+  .button-icon {
+    font-size: 18px !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin-right: 4px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 599px) {
+  .dialog-container {
+    width: 100%;
+    max-width: none;
+    border-radius: 0;
+  }
+
+  .dialog-actions {
+    flex-direction: column-reverse;
+    padding: 16px 24px 24px;
+  }
+
+  .cancel-button,
+  .confirm-button {
+    width: 100%;
+    margin: 0;
+    padding: 12px 24px !important;
+  }
+
+  .cancel-button {
+    margin-top: 8px;
+  }
+}
+
+:host {
+  display: block;
+
+  ::ng-deep {
+    .blur-dialog-backdrop {
+      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.3) !important;
+    }
+  }
+} 

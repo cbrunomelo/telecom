@@ -1,0 +1,22 @@
+<div class="input-container">
+  <label *ngIf="label">{{ label }}</label>
+  <div class="input-wrapper">
+    <select
+      [(ngModel)]="value"
+      (ngModelChange)="handleChange($event)"
+      (blur)="handleBlur()"
+      [disabled]="disabled"
+      [class.has-icon]="icon"
+    >
+      <option value="" disabled selected>{{ placeholder }}</option>
+      <option *ngFor="let option of options" [value]="option.value">
+        {{ option.label }}
+      </option>
+    </select>
+    <i *ngIf="icon" class="fa-solid fa-{{ icon }} input-icon"></i>
+    <i class="fa-solid fa-angle-down select-icon"></i>
+  </div>
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div> 
