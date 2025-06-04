@@ -37,3 +37,20 @@ backend/.env.*
 # ─────────────────────────────
 .DS_Store
 Thumbs.db
+
+# Ignorar pasta do Visual Studio (.vs)
+backend/.vs/
+
+# Arquivos de cache do Copilot e do IntelliSense
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/*.vsidx
+**/*.v2
+**/*.backup.json
+
+# ─────────────────────────────
+# Sistema
+# ─────────────────────────────
+.DS_Store
+Thumbs.db
