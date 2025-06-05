@@ -12,8 +12,9 @@ public abstract class EntityBase
     private List<INotification> notifications = new List<INotification>();
     protected IReadOnlyCollection<INotification> Notifications => (IReadOnlyCollection<INotification>)notifications;
     protected void AddNotification(INotification notification) => notifications.Add(notification);
-    protected void ClearNotifications() => notifications.Clear();
+    public void ClearNotifications() => notifications.Clear();
     public bool HasNotifications() => notifications.Any();
+    public IReadOnlyCollection<INotification> GetNotifications() => notifications.AsReadOnly();
     public Guid Id { get; set; }
 
     public override bool Equals(object obj)
