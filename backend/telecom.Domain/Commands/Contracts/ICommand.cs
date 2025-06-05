@@ -10,4 +10,6 @@ namespace telecom.Domain.Commands.Contracts;
 
 public interface ICommand : IRequest<IHandleResult>
 {
+    List<string> ValidationErrors { get; }
+    bool IsValid();
 }

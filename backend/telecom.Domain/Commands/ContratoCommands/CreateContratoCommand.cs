@@ -1,8 +1,10 @@
 ﻿using telecom.Domain.Commands.Contracts;
+using telecom.Domain.Validation.Commands.ContratoCommands;
+using FluentValidation;
 
 namespace telecom.Domain.Commands.ContratoCommands;
 
-public class CreateContratoCommand : ICommand
+public class CreateContratoCommand : CommandBase<CreateContratoCommand>
 {
     public string NomeFilial { get; set; }
     public string PlanoContratado { get; set; }
@@ -20,4 +22,6 @@ public class CreateContratoCommand : ICommand
         ValorMensal = valorMensal;
         OperadoraId = operadoraId;
     }
+
+    protected override IValidator<CreateContratoCommand> GetValidator() => new CreateContratoCommandValidator();
 }

@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using telecom.Domain.Commands.Contracts;
 using telecom.Domain.Enuns;
+using telecom.Domain.Validation.Commands.OperadoraCommands;
+using FluentValidation;
 
 namespace telecom.Domain.Commands.OperadoraCommands
 {
-    public class UpdateOperadoraCommand : ICommand
+    public class UpdateOperadoraCommand : CommandBase<UpdateOperadoraCommand>
     {
         public Guid Id { get; set; }
         public string Nome { get; set; }
@@ -22,5 +24,7 @@ namespace telecom.Domain.Commands.OperadoraCommands
             ETipoServicoOperadora = eTipoServicoOperadora;
             ContatoSuporte = contatoSuporte;
         }
+
+        protected override IValidator<UpdateOperadoraCommand> GetValidator() => new UpdateOperadoraCommandValidator();
     }
 }

@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using telecom.Domain.Commands.Contracts;
 using telecom.Domain.Enuns;
+using telecom.Domain.Validation.Commands.OperadoraCommands;
+using FluentValidation;
 
 namespace telecom.Domain.Commands.OperadoraCommands
 {
-    public class CreateOperadoraCommand : ICommand
+    public class CreateOperadoraCommand : CommandBase<CreateOperadoraCommand>
     {
         public string Nome { get; set; }
         public ETipoServicoOperadora ETipoServicoOperadora { get; set; }
@@ -20,5 +22,7 @@ namespace telecom.Domain.Commands.OperadoraCommands
             ETipoServicoOperadora = eTipoServicoOperadora;
             ContatoSuporte = contatoSuporte;
         }
+
+        protected override IValidator<CreateOperadoraCommand> GetValidator() => new CreateOperadoraCommandValidator();
     }
 }

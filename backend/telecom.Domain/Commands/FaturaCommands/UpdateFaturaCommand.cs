@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using telecom.Domain.Commands.Contracts;
+using telecom.Domain.Validation.Commands.FaturaCommands;
+using FluentValidation;
 
 namespace telecom.Domain.Commands.FaturaCommands
 {
-    public class UpdateFaturaCommand : ICommand
+    public class UpdateFaturaCommand : CommandBase<UpdateFaturaCommand>
     {
         public Guid Id { get; set; }
         public decimal Valor { get; set; }
@@ -19,5 +21,7 @@ namespace telecom.Domain.Commands.FaturaCommands
             Valor = valor;
             DataVencimento = dataVencimento;
         }
+
+        protected override IValidator<UpdateFaturaCommand> GetValidator() => new UpdateFaturaCommandValidator();
     }
 }
