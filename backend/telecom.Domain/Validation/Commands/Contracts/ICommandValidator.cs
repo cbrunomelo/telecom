@@ -9,7 +9,7 @@ using telecom.Domain.Commands.ContratoCommands;
 
 namespace telecom.Domain.Validation.Commands.Contracts;
 
-public abstract class ICommandValidator<T> : AbstractValidator<T> where T : CommandBase
+public abstract class ICommandValidator<T> : AbstractValidator<T> where T : CommandBase<T>
 {
 
 }
