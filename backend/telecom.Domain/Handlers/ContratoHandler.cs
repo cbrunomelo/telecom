@@ -38,16 +38,13 @@ public class ContratoHandler :
 
     public async Task<IHandleResult> Handle(CreateContratoCommand command, CancellationToken cancellationToken)
     {
-        // Validar o command
         if (!command.IsValid())
             return new HandleResult("Não foi possível criar o contrato", command.ValidationErrors);
 
-        // Verificar se a operadora existe
         var operadoraExists = await _operadoraRepository.ExistsAsync(command.OperadoraId);
         if (!operadoraExists)
             return new HandleResult("Não foi possível criar o contrato", "Operadora não encontrada");
 
-        // Mapear command para entidade usando AutoMapper
         var contrato = _mapper.Map<Contrato>(command);
 
         var contratoId = await _contratoRepository.CreateAsync(contrato);
@@ -56,7 +53,6 @@ public class ContratoHandler :
 
         contrato.Id = contratoId;
 
-        // Publicar eventos se a entidade suportar notificações
         if (contrato.HasNotifications())
             await _mediator.PublishAll(contrato);
 
@@ -65,16 +61,13 @@ public class ContratoHandler :
 
     public async Task<IHandleResult> Handle(UpdateContratoCommand command, CancellationToken cancellationToken)
     {
-        // Validar o command
         if (!command.IsValid())
             return new HandleResult("Não foi possível atualizar o contrato", command.ValidationErrors);
 
-        // Verificar se o contrato existe
         var contratoExistente = await _contratoRepository.GetByIdAsync(command.Id);
         if (contratoExistente == null)
             return new HandleResult("Não foi possível atualizar o contrato", "Contrato não encontrado");
 
-        // Atualizar usando o método da entidade (preserva lógica de negócio)
         contratoExistente.Atualizar(
             command.NomeFilial,
             command.PlanoContratado,
@@ -87,7 +80,6 @@ public class ContratoHandler :
         if (!success)
             return new HandleResult("Não foi possível atualizar o contrato", "Erro interno");
 
-        // Publicar eventos se a entidade suportar notificações
         if (contratoExistente.HasNotifications())
             await _mediator.PublishAll(contratoExistente);
 
@@ -96,17 +88,12 @@ public class ContratoHandler :
 
     public async Task<IHandleResult> Handle(DeleteContratoCommand command, CancellationToken cancellationToken)
     {
-        // Validar o command
         if (!command.IsValid())
             return new HandleResult("Não foi possível deletar o contrato", command.ValidationErrors);
 
-        // Verificar se o contrato existe
         var contrato = await _contratoRepository.GetByIdAsync(command.Id);
         if (contrato == null)
             return new HandleResult("Não foi possível deletar o contrato", "Contrato não encontrado");
-
-        // Verificar se o contrato possui faturas (regra de negócio)
-        // Aqui você poderia adicionar validação adicional se necessário
 
         var success = await _contratoRepository.DeleteAsync(command.Id);
         if (!success)

@@ -35,11 +35,9 @@ public class OperadoraHandler :
 
     public async Task<IHandleResult> Handle(CreateOperadoraCommand command, CancellationToken cancellationToken)
     {
-        // Validar o command
         if (!command.IsValid())
             return new HandleResult("Não foi possível criar a operadora", command.ValidationErrors);
 
-        // Mapear command para entidade usando AutoMapper
         var operadora = _mapper.Map<Operadora>(command);
 
         var operadoraId = await _operadoraRepository.CreateAsync(operadora);
@@ -48,7 +46,6 @@ public class OperadoraHandler :
 
         operadora.Id = operadoraId;
 
-        // Publicar eventos se a entidade suportar notificações
         if (operadora.HasNotifications())
             await _mediator.PublishAll(operadora);
 
@@ -57,16 +54,13 @@ public class OperadoraHandler :
 
     public async Task<IHandleResult> Handle(UpdateOperadoraCommand command, CancellationToken cancellationToken)
     {
-        // Validar o command
         if (!command.IsValid())
             return new HandleResult("Não foi possível atualizar a operadora", command.ValidationErrors);
 
-        // Verificar se a operadora existe
         var operadoraExistente = await _operadoraRepository.GetByIdAsync(command.Id);
         if (operadoraExistente == null)
             return new HandleResult("Não foi possível atualizar a operadora", "Operadora não encontrada");
 
-        // Atualizar usando o método da entidade (preserva lógica de negócio)
         operadoraExistente.Atualizar(
             command.Nome,
             command.ETipoServicoOperadora,
@@ -77,7 +71,6 @@ public class OperadoraHandler :
         if (!success)
             return new HandleResult("Não foi possível atualizar a operadora", "Erro interno");
 
-        // Publicar eventos se a entidade suportar notificações
         if (operadoraExistente.HasNotifications())
             await _mediator.PublishAll(operadoraExistente);
 
@@ -86,16 +79,13 @@ public class OperadoraHandler :
 
     public async Task<IHandleResult> Handle(DeleteOperadoraCommand command, CancellationToken cancellationToken)
     {
-        // Validar o command
         if (!command.IsValid())
             return new HandleResult("Não foi possível deletar a operadora", command.ValidationErrors);
 
-        // Verificar se a operadora existe
         var operadora = await _operadoraRepository.GetByIdAsync(command.Id);
         if (operadora == null)
             return new HandleResult("Não foi possível deletar a operadora", "Operadora não encontrada");
 
-        // Verificar se a operadora possui contratos ativos (regra de negócio)
         var hasContratos = await _operadoraRepository.HasContratosAsync(command.Id);
         if (hasContratos)
             return new HandleResult("Não foi possível deletar a operadora", "Operadora possui contratos ativos");
