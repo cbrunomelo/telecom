@@ -8,9 +8,43 @@ services:
       - "4200:80"
     restart: unless-stopped
     networks:
-      - telecom-network
+      - frontend-api-network
+
+  api:
+    build:
+      context: ../backend
+      dockerfile: telecom.Api/Dockerfile
+    container_name: telecom-api
+    ports:
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=telecom;Username=telecom_user;Password=telecom_password
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - frontend-api-network
+      - db-api-network
+
+  postgres:
+    image: postgres:15
+    container_name: telecom-postgres
+    environment:
+      POSTGRES_DB: telecom
+      POSTGRES_USER: telecom_user
+      POSTGRES_PASSWORD: telecom_password
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - db-api-network
 
 networks:
-  telecom-network:
-    name: telecom-network
-    driver: bridge 
+  frontend-api-network:
+    name: telecom-frontend-api
+    driver: bridge
+  
+  db-api-network:
+    name: telecom-db-api
+    driver: bridge
