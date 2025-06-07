@@ -38,7 +38,7 @@ interface SelectOption {
 })
 export class FaturaFormComponent implements OnInit {
   faturaForm = this.formBuilder.group({
-    contratoId: [0, Validators.required],
+    contratoId: ['', Validators.required],
     numeroFatura: ['', Validators.required],
     dataEmissao: [{ value: this.formatDateForInput(new Date()), disabled: true }],
     dataVencimento: ['', Validators.required],
@@ -56,7 +56,7 @@ export class FaturaFormComponent implements OnInit {
   }));
 
   isEditing = false;
-  faturaId: number | null = null;
+  faturaId: string | null = null;
 
   constructor(
     private formBuilder: NonNullableFormBuilder,
@@ -95,8 +95,8 @@ export class FaturaFormComponent implements OnInit {
       switchMap(id => {
         if (id) {
           this.isEditing = true;
-          this.faturaId = +id;
-          return this.faturaService.getById(+id);
+          this.faturaId = id;
+          return this.faturaService.getById(id);
         }
         return of(null);
       })
@@ -106,7 +106,7 @@ export class FaturaFormComponent implements OnInit {
           this.faturaForm.patchValue({
             contratoId: fatura.contratoId,
             numeroFatura: fatura.numeroFatura,
-            dataEmissao: this.formatDateForInput(fatura.createdAt),
+            dataEmissao: fatura.createdAt ? this.formatDateForInput(fatura.createdAt) : this.formatDateForInput(new Date()),
             dataVencimento: this.formatDateForInput(fatura.dataVencimento),
             dataPagamento: fatura.dataPagamento ? this.formatDateForInput(fatura.dataPagamento) : this.formatDateForInput(new Date()),
             valor: fatura.valor,

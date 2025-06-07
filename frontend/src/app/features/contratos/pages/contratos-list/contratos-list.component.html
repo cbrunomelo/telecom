@@ -33,25 +33,23 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Filial</th>
+        <th>Nome Filial</th>
+        <th>Plano Contratado</th>
         <th>Data Início</th>
-        <th>Data Fim</th>
-        <th>Status</th>
+        <th>Data Vencimento</th>
+        <th>Valor Mensal</th>
+        <th>Operadora</th>
         <th>Ações</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let contrato of contratos">
-        <td>{{ contrato.id }}</td>
+      <tr *ngFor="let contrato of contratos; trackBy: trackByContratoId">
         <td>{{ contrato.nomeFilial }}</td>
+        <td>{{ contrato.planoContratado }}</td>
         <td>{{ contrato.dataInicio | date:'dd/MM/yyyy' }}</td>
-        <td>{{ contrato.dataFim | date:'dd/MM/yyyy' }}</td>
-        <td>
-          <span [class]="getStatusClass(contrato.status)">
-            {{ contrato.status }}
-          </span>
-        </td>
+        <td>{{ contrato.dataVencimento | date:'dd/MM/yyyy' }}</td>
+        <td>{{ contrato.valorMensal | currency:'BRL':'symbol':'1.2-2' }}</td>
+        <td>{{ getNomeOperadora(contrato.operadoraId) }}</td>
         <td>
           <button class="btn btn-sm btn-info me-2" [routerLink]="['editar', contrato.id]">
             Editar
@@ -63,6 +61,11 @@
       </tr>
     </tbody>
   </table>
+
+  <!-- Mensagem quando não há contratos -->
+  <div *ngIf="contratos.length === 0" class="text-center mt-4">
+    <p class="text-muted">Nenhum contrato encontrado.</p>
+  </div>
 
   <!-- Paginador -->
   <mat-paginator

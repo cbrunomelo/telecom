@@ -42,7 +42,7 @@ export class ContratoFormComponent implements OnInit {
   contratoForm = this.formBuilder.group({
     nomeFilial: ['', Validators.required],
     numero: ['', Validators.required],
-    operadoraId: [0, Validators.required],
+    operadoraId: ['', Validators.required],
     planoContratado: ['', Validators.required],
     dataInicio: ['', Validators.required],
     dataFim: [''],
@@ -67,7 +67,7 @@ export class ContratoFormComponent implements OnInit {
   ];
 
   isEditing = false;
-  contratoId: number | null = null;
+  contratoId: string | null = null;
   validationErrors: string[] = [];
 
   constructor(
@@ -78,11 +78,13 @@ export class ContratoFormComponent implements OnInit {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
   ) {
-    this.operadoras$ = this.operadoraService.getAll();
+    this.operadoras$ = this.operadoraService.getAll().pipe(
+      map(result => result.items)
+    );
     this.operadorasOptions$ = this.operadoras$.pipe(
       map(operadoras => operadoras.map(operadora => ({
         label: `${operadora.nome} - ${operadora.tipoServico}`,
-        value: operadora.id || 0
+        value: operadora.id || ''
       })))
     );
   }
@@ -93,8 +95,8 @@ export class ContratoFormComponent implements OnInit {
       switchMap(id => {
         if (id) {
           this.isEditing = true;
-          this.contratoId = +id;
-          return this.contratoService.getById(+id);
+          this.contratoId = id;
+          return this.contratoService.getById(id);
         }
         return of(null);
       })

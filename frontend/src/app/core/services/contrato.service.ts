@@ -15,12 +15,12 @@ export class ContratoService {
   }
 
 
-  getById(id: number): Observable<Contrato> {
+  getById(id: string): Observable<Contrato> {
     return this.apiService.get<Contrato>(`/contrato/${id}`);
   }
 
 
-  getByOperadora(operadoraId: number): Observable<Contrato[]> {
+  getByOperadora(operadoraId: string): Observable<Contrato[]> {
     return this.apiService.get<Contrato[]>('/contrato', { operadoraId });
   }
 
@@ -30,16 +30,16 @@ export class ContratoService {
   }
 
 
-  update(id: number, contrato: Partial<Contrato>): Observable<Contrato> {
+  update(id: string, contrato: Partial<Contrato>): Observable<Contrato> {
     return this.apiService.put<Contrato>(`/contrato/${id}`, contrato);
   }
 
-  delete(id: number): Observable<void> {
+  delete(id: string): Observable<void> {
     return this.apiService.delete<void>(`/contrato/${id}`);
   }
 
 
-  patch(id: number, contrato: Partial<Contrato>): Observable<Contrato> {
+  patch(id: string, contrato: Partial<Contrato>): Observable<Contrato> {
     return this.apiService.patch<Contrato>(`/contrato/${id}`, contrato);
   }
 } 

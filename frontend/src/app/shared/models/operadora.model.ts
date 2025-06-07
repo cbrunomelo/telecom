@@ -10,22 +10,13 @@ export enum StatusOperadora {
 }
 
 export interface Operadora {
-  id: number;
+  id?: string;
   nome: string;
   tipoServico: TipoServico;
   contatoSuporte: string;
-  dataCadastro: Date;
   status: StatusOperadora;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface FiltrosPesquisaOperadora {
-  nome?: string;
-  tipoServico?: TipoServico;
-  status?: StatusOperadora;
-  pagina?: number;
-  itensPorPagina?: number;
-  ordenarPor?: 'nome' | 'tipoServico' | 'status' | 'dataCadastro';
-  direcao?: 'asc' | 'desc';
+  // Propriedades para compatibilidade com dados mock/frontend
+  dataCadastro?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 } 

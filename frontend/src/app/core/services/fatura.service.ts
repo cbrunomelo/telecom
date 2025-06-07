@@ -53,14 +53,14 @@ export class FaturaService {
   /**
    * Busca uma fatura por ID
    */
-  getById(id: number): Observable<Fatura> {
+  getById(id: string): Observable<Fatura> {
     return this.apiService.get<Fatura>(`/fatura/${id}`);
   }
 
   /**
    * Busca faturas por contrato
    */
-  getByContrato(contratoId: number): Observable<Fatura[]> {
+  getByContrato(contratoId: string): Observable<Fatura[]> {
     return this.apiService.get<Fatura[]>('/fatura', { contratoId });
   }
 
@@ -74,21 +74,21 @@ export class FaturaService {
   /**
    * Atualiza uma fatura existente
    */
-  update(id: number, fatura: Partial<Fatura>): Observable<Fatura> {
+  update(id: string, fatura: Partial<Fatura>): Observable<Fatura> {
     return this.apiService.put<Fatura>(`/fatura/${id}`, fatura);
   }
 
   /**
    * Deleta uma fatura
    */
-  delete(id: number): Observable<void> {
+  delete(id: string): Observable<void> {
     return this.apiService.delete<void>(`/fatura/${id}`);
   }
 
   /**
    * Atualiza parcialmente uma fatura
    */
-  patch(id: number, fatura: Partial<Fatura>): Observable<Fatura> {
+  patch(id: string, fatura: Partial<Fatura>): Observable<Fatura> {
     return this.apiService.patch<Fatura>(`/fatura/${id}`, fatura);
   }
 
@@ -116,7 +116,7 @@ export class FaturaService {
   /**
    * Marca uma fatura como paga
    */
-  marcarComoPaga(id: number, dataPagamento?: Date): Observable<Fatura> {
+  marcarComoPaga(id: string, dataPagamento?: Date): Observable<Fatura> {
     return this.apiService.patch<Fatura>(`/fatura/${id}/pagar`, { 
       status: 'PAGA', 
       dataPagamento: dataPagamento || new Date() 
@@ -126,7 +126,7 @@ export class FaturaService {
   /**
    * Marca uma fatura como atrasada
    */
-  marcarComoAtrasada(id: number): Observable<Fatura> {
+  marcarComoAtrasada(id: string): Observable<Fatura> {
     return this.apiService.patch<Fatura>(`/fatura/${id}/atraso`, { status: 'ATRASADA' });
   }
 } 

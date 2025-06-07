@@ -1,5 +1,3 @@
-import { Operadora } from './operadora.model';
-
 export enum StatusContrato {
   ATIVO = 'ATIVO',
   INATIVO = 'INATIVO',
@@ -7,18 +5,19 @@ export enum StatusContrato {
 }
 
 export interface Contrato {
-  id: number;
+  id?: string;
   nomeFilial: string;
-  numero: string;
-  operadoraId: number;
   planoContratado: string;
   dataInicio: Date;
-  dataFim?: Date;
   dataVencimento: Date;
   valorMensal: number;
-  status: StatusContrato;
-  tipo: 'INTERNET' | 'TELEFONIA' | 'TV';
+  operadoraId: string;
+  // Propriedades para compatibilidade com dados mock/frontend
+  numero?: string;
+  dataFim?: Date;
+  status?: StatusContrato;
+  tipo?: 'INTERNET' | 'TELEFONIA' | 'TV';
   observacoes?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 } 

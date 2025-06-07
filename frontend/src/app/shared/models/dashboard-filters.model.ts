@@ -1,5 +1,5 @@
 export interface DashboardFilters {
   periodo: number;
-  operadoraId: number | null;
+  operadoraId: string | null;
   status: string | null;
 } 

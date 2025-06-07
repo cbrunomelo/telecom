@@ -7,7 +7,7 @@ import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
-import { OperadoraService } from '../../../core/services/operadoras/operadora.service';
+import { OperadoraService } from '../../../core/services/operadora.service';
 import { Operadora, StatusOperadora, TipoServico } from '../../../shared/models/operadora.model';
 import { TextInputComponent } from '../../../shared/inputs/text-input/text-input.component';
 import { SelectInputComponent } from '../../../shared/inputs/select-input/select-input.component';
@@ -46,7 +46,7 @@ export class OperadoraFormComponent implements OnInit {
   });
 
   isEditing = false;
-  operadoraId: number | null = null;
+  operadoraId: string | null = null;
 
   statusOptions: SelectOption[] = Object.values(StatusOperadora).map(status => ({
     label: status,
@@ -72,8 +72,8 @@ export class OperadoraFormComponent implements OnInit {
       switchMap(id => {
         if (id) {
           this.isEditing = true;
-          this.operadoraId = +id;
-          return this.operadoraService.getById(+id);
+          this.operadoraId = id;
+          return this.operadoraService.getById(id);
         }
         return of(null);
       })
@@ -83,7 +83,7 @@ export class OperadoraFormComponent implements OnInit {
           nome: operadora.nome,
           tipoServico: operadora.tipoServico,
           contatoSuporte: operadora.contatoSuporte,
-          dataCadastro: this.formatDateForInput(operadora.dataCadastro),
+          dataCadastro: operadora.dataCadastro ? this.formatDateForInput(operadora.dataCadastro) : '',
           status: operadora.status
         });
       }
@@ -99,7 +99,7 @@ export class OperadoraFormComponent implements OnInit {
       };
 
       const action = this.isEditing
-        ? this.operadoraService.update(this.operadoraId!, operadora)
+        ? this.operadoraService.update(this.operadoraId!, operadora as Operadora)
         : this.operadoraService.create(operadora);
 
       action.subscribe({

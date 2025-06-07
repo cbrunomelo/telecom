@@ -1,5 +1,3 @@
-import { Contrato } from './contrato.model';
-
 export enum StatusFatura {
   PAGA = 'PAGA',
   PENDENTE = 'PENDENTE',
@@ -7,16 +5,17 @@ export enum StatusFatura {
 }
 
 export interface Fatura {
-  id: number;
+  id?: string;
   numeroFatura: string;
-  contratoId: number;
-  operadoraId: number;
+  contratoId: string;
+  operadoraId: string;
   dataEmissao: Date;
   dataVencimento: Date;
   valor: number;
   status: StatusFatura;
   dataPagamento?: Date;
+  // Propriedades para compatibilidade com dados mock/frontend
   observacoes?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 } 

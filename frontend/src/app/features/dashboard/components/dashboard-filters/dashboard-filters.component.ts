@@ -45,8 +45,8 @@ export class DashboardFiltersComponent implements OnInit {
   }
 
   private loadOperadoras() {
-    this.operadoraService.getAll().subscribe(operadoras => {
-      this.operadoras = operadoras;
+    this.operadoraService.getAll().subscribe(result => {
+      this.operadoras = result.items;
     });
   }
 } 

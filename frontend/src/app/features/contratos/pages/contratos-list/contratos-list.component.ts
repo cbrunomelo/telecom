@@ -7,7 +7,10 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
 import { CardComponent } from '@shared/components/card/card.component';
 import { ContratoService } from '../../../../core/services/contrato.service';
+import { OperadoraService } from '../../../../core/services/operadora.service';
 import { Contrato, StatusContrato } from '../../../../shared/models/contrato.model';
+import { Operadora } from '../../../../shared/models/operadora.model';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-contratos-list',
@@ -26,6 +29,7 @@ import { Contrato, StatusContrato } from '../../../../shared/models/contrato.mod
 })
 export class ContratosListComponent implements OnInit {
   contratos: Contrato[] = [];
+  operadoras: Operadora[] = [];
   StatusContrato = StatusContrato;
 
   // Paginação
@@ -42,6 +46,7 @@ export class ContratosListComponent implements OnInit {
 
   constructor(
     private contratoService: ContratoService,
+    private operadoraService: OperadoraService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) { }
@@ -51,33 +56,42 @@ export class ContratosListComponent implements OnInit {
   }
 
   carregarContratos(): void {
-    this.contratoService.getAll().subscribe({
+    // Carrega contratos e operadoras simultaneamente
+    forkJoin({
+      contratos: this.contratoService.getAll(),
+      operadoras: this.operadoraService.getAll()
+    }).subscribe({
       next: (data: any) => {
-        // Verifica se a resposta é paginada (tem propriedades items, total, etc.)
-        if (data && typeof data === 'object' && 'items' in data && 'total' in data) {
+        // Armazena operadoras
+        this.operadoras = data.operadoras || [];
+        
+        // Processa contratos
+        const contratosData = data.contratos;
+        if (contratosData && typeof contratosData === 'object' && 'items' in contratosData && 'total' in contratosData) {
           // Resposta paginada do backend
-          this.contratos = data.items;
-          this.totalItems = data.total;
-        } else if (Array.isArray(data)) {
+          this.contratos = contratosData.items;
+          this.totalItems = contratosData.total;
+        } else if (Array.isArray(contratosData)) {
           // Resposta simples (array de contratos) - faz paginação no frontend
           const start = (this.currentPage - 1) * this.pageSize;
           const end = start + this.pageSize;
-          this.contratos = data.slice(start, end);
-          this.totalItems = data.length;
+          this.contratos = contratosData.slice(start, end);
+          this.totalItems = contratosData.length;
         } else {
-          console.warn('Formato de resposta inesperado:', data);
+          console.warn('Formato de resposta inesperado:', contratosData);
           this.contratos = [];
           this.totalItems = 0;
         }
       },
       error: (error) => {
-        console.error('Erro ao carregar contratos:', error);
-        this.snackBar.open('Erro ao carregar contratos: ' + error.message, 'Fechar', {
+        console.error('Erro ao carregar dados:', error);
+        this.snackBar.open('Erro ao carregar dados: ' + error.message, 'Fechar', {
           duration: 5000,
           horizontalPosition: 'end',
           panelClass: ['error-snackbar']
         });
         this.contratos = [];
+        this.operadoras = [];
         this.totalItems = 0;
       }
     });
@@ -107,6 +121,15 @@ export class ContratosListComponent implements OnInit {
     return this.contratos.reduce((total, contrato) => total + contrato.valorMensal, 0);
   }
 
+  getNomeOperadora(operadoraId: string): string {
+    const operadora = this.operadoras.find(op => op.id === operadoraId || op.id?.toString() === operadoraId.toString());
+    return operadora ? operadora.nome : `ID: ${operadoraId}`;
+  }
+
+  trackByContratoId(index: number, contrato: Contrato): any {
+    return contrato.id;
+  }
+
   confirmarExclusao(contrato: Contrato): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
@@ -120,7 +143,7 @@ export class ContratosListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.contratoService.delete(contrato.id).subscribe({
+        this.contratoService.delete(contrato.id || '').subscribe({
           next: () => {
             this.snackBar.open('Contrato excluído com sucesso', 'Fechar', {
               duration: 3000,

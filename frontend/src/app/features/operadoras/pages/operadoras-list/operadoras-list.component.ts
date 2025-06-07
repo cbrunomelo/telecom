@@ -6,7 +6,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
 import { CardComponent } from '@shared/components/card/card.component';
-import { OperadoraService, PagedResult } from '../../../../core/services/operadoras/operadora.service';
+import { OperadoraService, PagedResult } from '../../../../core/services/operadora.service';
 import { Operadora, StatusOperadora, TipoServico } from '../../../../shared/models/operadora.model';
 
 @Component({
@@ -95,7 +95,7 @@ export class OperadorasListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.operadoraService.delete(operadora.id).subscribe({
+        this.operadoraService.delete(operadora.id || '').subscribe({
           next: () => {
             this.snackBar.open('Operadora excluída com sucesso', 'Fechar', {
               duration: 3000,

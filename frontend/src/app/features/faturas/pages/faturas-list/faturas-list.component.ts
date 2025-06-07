@@ -105,7 +105,7 @@ export class FaturasListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.faturaService.delete(fatura.id).subscribe({
+        this.faturaService.delete(fatura.id || '').subscribe({
           next: () => {
             this.snackBar.open('Fatura excluída com sucesso', 'Fechar', {
               duration: 3000,
