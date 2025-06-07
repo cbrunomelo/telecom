@@ -22,8 +22,8 @@ export class OperadoraService {
   /**
    * Busca todas as operadoras
    */
-  getAll(params?: { page?: number; pageSize?: number }): Observable<PagedResult<Operadora>> {
-    return this.apiService.get<PagedResult<Operadora>>('/operadora', params);
+  getAll(): Observable<PagedResult<Operadora>> {
+    return this.apiService.get<PagedResult<Operadora>>('/operadora');
   }
 
   /**

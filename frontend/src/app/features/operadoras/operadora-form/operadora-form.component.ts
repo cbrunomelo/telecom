@@ -8,10 +8,10 @@ import { map, switchMap } from 'rxjs/operators';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { OperadoraService } from '../../../core/services/operadora.service';
-import { Operadora, StatusOperadora, TipoServico } from '../../../shared/models/operadora.model';
+import { Operadora, ETipoServicoOperadora, getTipoServicoTexto } from '../../../shared/models/operadora.model';
 import { TextInputComponent } from '../../../shared/inputs/text-input/text-input.component';
 import { SelectInputComponent } from '../../../shared/inputs/select-input/select-input.component';
-import { DateInputComponent } from '../../../shared/inputs/date-input/date-input.component';
+import { ValidationErrorsComponent } from '../../../shared/components/validation-errors/validation-errors.component';
 import { PhoneInputComponent } from '../../../shared/inputs/phone-input/phone-input.component';
 
 interface SelectOption {
@@ -29,7 +29,7 @@ interface SelectOption {
     MatSnackBarModule,
     TextInputComponent,
     SelectInputComponent,
-    DateInputComponent,
+    ValidationErrorsComponent,
     PhoneInputComponent
   ],
   templateUrl: './operadora-form.component.html',
@@ -39,24 +39,19 @@ interface SelectOption {
 export class OperadoraFormComponent implements OnInit {
   operadoraForm = this.formBuilder.group({
     nome: ['', Validators.required],
-    tipoServico: ['', Validators.required] as unknown as [TipoServico, typeof Validators.required],
-    contatoSuporte: ['', Validators.required],
-    dataCadastro: ['', Validators.required],
-    status: ['', Validators.required] as unknown as [StatusOperadora, typeof Validators.required]
+    eTipoServicoOperadora: [null as ETipoServicoOperadora | null, Validators.required],
+    contatoSuporte: ['', Validators.required]
   });
 
   isEditing = false;
   operadoraId: string | null = null;
+  validationErrors: string[] = [];
 
-  statusOptions: SelectOption[] = Object.values(StatusOperadora).map(status => ({
-    label: status,
-    value: status
-  }));
-
-  tipoServicoOptions: SelectOption[] = Object.values(TipoServico).map(tipo => ({
-    label: tipo,
-    value: tipo
-  }));
+  tipoServicoOptions: SelectOption[] = [
+    { label: getTipoServicoTexto(ETipoServicoOperadora.Movel), value: ETipoServicoOperadora.Movel },
+    { label: getTipoServicoTexto(ETipoServicoOperadora.Fixo), value: ETipoServicoOperadora.Fixo },
+    { label: getTipoServicoTexto(ETipoServicoOperadora.Internet), value: ETipoServicoOperadora.Internet }
+  ];
 
   constructor(
     private formBuilder: NonNullableFormBuilder,
@@ -81,22 +76,27 @@ export class OperadoraFormComponent implements OnInit {
       if (operadora) {
         this.operadoraForm.patchValue({
           nome: operadora.nome,
-          tipoServico: operadora.tipoServico,
-          contatoSuporte: operadora.contatoSuporte,
-          dataCadastro: operadora.dataCadastro ? this.formatDateForInput(operadora.dataCadastro) : '',
-          status: operadora.status
+          eTipoServicoOperadora: Number(operadora.eTipoServicoOperadora), // Garante que seja número
+          contatoSuporte: operadora.contatoSuporte
         });
       }
     });
   }
 
   onSubmit(): void {
+    // Limpa erros anteriores
+    this.validationErrors = [];
+
     if (this.operadoraForm.valid) {
       const formValue = this.operadoraForm.getRawValue();
       const operadora: Partial<Operadora> = {
-        ...formValue,
-        dataCadastro: new Date(formValue.dataCadastro)
+        nome: formValue.nome,
+        eTipoServicoOperadora: Number(formValue.eTipoServicoOperadora), // Converte para número
+        contatoSuporte: formValue.contatoSuporte
       };
+
+      console.log('Dados da operadora sendo enviados:', operadora);
+      console.log('Tipo do eTipoServicoOperadora:', typeof operadora.eTipoServicoOperadora);
 
       const action = this.isEditing
         ? this.operadoraService.update(this.operadoraId!, operadora as Operadora)
@@ -115,29 +115,43 @@ export class OperadoraFormComponent implements OnInit {
           );
           this.router.navigate(['/operadoras']);
         },
-        error: () => {
-          this.snackBar.open(
-            this.isEditing ? 'Erro ao atualizar operadora' : 'Erro ao criar operadora',
-            'Fechar',
-            {
-              duration: 3000,
-              horizontalPosition: 'end',
-              panelClass: ['error-snackbar']
+        error: (error) => {
+          console.error('Erro ao salvar operadora:', error);
+          
+          // Extrai erros de validação da API
+          if (error.message && error.message.includes(':')) {
+            const errorParts = error.message.split(':');
+            if (errorParts.length > 1) {
+              const validationErrorsText = errorParts[1].trim();
+              this.validationErrors = validationErrorsText.split(',').map((err: string) => err.trim());
             }
-          );
+          } else {
+            this.validationErrors = [error.message || 'Erro ao salvar operadora'];
+          }
+
+          // Mostra snackbar apenas se não houver erros de validação específicos
+          if (this.validationErrors.length === 0) {
+            this.snackBar.open(
+              this.isEditing ? 'Erro ao atualizar operadora' : 'Erro ao criar operadora',
+              'Fechar',
+              {
+                duration: 3000,
+                horizontalPosition: 'end',
+                panelClass: ['error-snackbar']
+              }
+            );
+          }
         }
       });
     } else {
-      this.snackBar.open('Por favor, preencha todos os campos obrigatórios', 'Fechar', {
-        duration: 3000,
-        horizontalPosition: 'end',
-        panelClass: ['error-snackbar']
+      // Marca todos os campos como touched para mostrar os erros
+      Object.keys(this.operadoraForm.controls).forEach(key => {
+        this.operadoraForm.get(key)?.markAsTouched();
       });
+
+      this.validationErrors = ['Por favor, preencha todos os campos obrigatórios'];
     }
   }
 
-  private formatDateForInput(date: Date): string {
-    const d = new Date(date);
-    return d.toISOString().split('T')[0];
-  }
+
 } 

@@ -8,7 +8,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { ContratoService } from '../../../core/services/contrato.service';
 import { OperadoraService } from '../../../core/services/operadora.service';
-import { Operadora } from '../../../shared/models/operadora.model';
+import { Operadora, ETipoServicoOperadora, getTipoServicoTexto } from '../../../shared/models/operadora.model';
 import { Contrato } from '../../../shared/models/contrato.model';
 import { TextInputComponent } from '../../../shared/inputs/text-input/text-input.component';
 import { SelectInputComponent } from '../../../shared/inputs/select-input/select-input.component';
@@ -109,7 +109,7 @@ export class ContratoFormComponent implements OnInit {
         }
         
         this.operadorasOptions = (this.operadoras || []).map(operadora => ({
-          label: `${operadora.nome} - ${operadora.tipoServico}`,
+          label: `${operadora.nome} - ${getTipoServicoTexto(operadora.eTipoServicoOperadora)}`,
           value: operadora.id || ''
         }));
         

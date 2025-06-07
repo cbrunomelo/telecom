@@ -3,27 +3,18 @@
   <button class="btn btn-primary mb-3" routerLink="novo">Nova Operadora</button>
   
   <div class="row mb-4">
-    <div class="col-md-4">
+    <div class="col-md-6">
       <app-card
         title="Total de Operadoras"
-        [value]="operadoras.length"
+        [value]="getTotalOperadoras()"
         icon="business"
         color="primary"
       ></app-card>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
       <app-card
-        title="Operadoras Ativas"
-        [value]="getOperadorasAtivas()"
-        icon="check_circle"
-        [trend]="calcularTrendAtivas()"
-        color="success"
-      ></app-card>
-    </div>
-    <div class="col-md-4">
-      <app-card
-        title="Tipos de Serviço"
-        [value]="operadoras.length"
+        title="Total de Itens"
+        [value]="totalItems"
         icon="settings_input_antenna"
         color="info"
       ></app-card>
@@ -36,22 +27,14 @@
         <th>Nome</th>
         <th>Tipo de Serviço</th>
         <th>Contato Suporte</th>
-        <th>Data Cadastro</th>
-        <th>Status</th>
         <th>Ações</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let operadora of operadoras">
+      <tr *ngFor="let operadora of operadoras; trackBy: trackByOperadoraId">
         <td>{{ operadora.nome }}</td>
-        <td>{{ operadora.tipoServico }}</td>
+        <td>{{ getTipoServicoTexto(operadora.eTipoServicoOperadora) }}</td>
         <td>{{ operadora.contatoSuporte }}</td>
-        <td>{{ operadora.dataCadastro | date:'dd/MM/yyyy' }}</td>
-        <td>
-          <span [class]="getStatusClass(operadora.status)">
-            {{ operadora.status }}
-          </span>
-        </td>
         <td>
           <button class="btn btn-sm btn-info me-2" [routerLink]="['editar', operadora.id]">
             Editar
@@ -63,6 +46,11 @@
       </tr>
     </tbody>
   </table>
+
+  <!-- Mensagem quando não há operadoras -->
+  <div *ngIf="operadoras.length === 0" class="text-center mt-4">
+    <p class="text-muted">Nenhuma operadora encontrada.</p>
+  </div>
 
   <mat-paginator
     [length]="totalItems"
