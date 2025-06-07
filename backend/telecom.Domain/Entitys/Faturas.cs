@@ -21,7 +21,7 @@ public class Faturas : EntityBase
 
     public Faturas(DateTime dataVencimento, decimal valorCobrado, EFaturaStatus status, Guid contratoId)
     {
-        DateEmissao = DateTime.Now;
+        DateEmissao = DateTime.UtcNow;
         DataVencimento = dataVencimento;
         ValorCobrado = valorCobrado;
         Status = status;

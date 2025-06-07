@@ -17,7 +17,6 @@ public class TelecomDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Aplicar todas as configurações do assembly automaticamente
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(TelecomDbContext).Assembly);
     }
 } 

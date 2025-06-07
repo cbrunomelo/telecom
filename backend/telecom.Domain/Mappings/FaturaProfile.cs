@@ -13,7 +13,7 @@ public class FaturaProfile : Profile
             .ForMember(dest => dest.ValorCobrado, opt => opt.MapFrom(src => src.Valor))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
             .ForMember(dest => dest.ContratoId, opt => opt.MapFrom(src => src.ContratoId))
-            .ForMember(dest => dest.DateEmissao, opt => opt.MapFrom(src => DateTime.Now))
+            .ForMember(dest => dest.DateEmissao, opt => opt.MapFrom(src => DateTime.UtcNow))
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.Contrato, opt => opt.Ignore());
 
