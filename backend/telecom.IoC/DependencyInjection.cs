@@ -4,8 +4,13 @@ using Microsoft.Extensions.DependencyInjection;
 using telecom.Application.Mappings;
 using telecom.Application.Services;
 using telecom.Application.Services.Contracts;
+using telecom.Domain.Handlers;
 using telecom.Domain.Mappings;
+using telecom.Domain.Repository;
+using telecom.Domain.UnitOfWork;
 using telecom.Infra.Data;
+using telecom.Infra.Repository;
+using telecom.Infra.UnitOfWork;
 
 namespace telecom.IoC;
 
@@ -19,6 +24,12 @@ public static class DependencyInjection
 
         services.AddDbContext<TelecomDbContext>(options =>
             options.UseNpgsql(connectionString));
+
+        // Registrar repositórios
+        services.AddScoped<IFaturaRepository, FaturaRepository>();
+        services.AddScoped<IContratoRepository, ContratoRepository>();
+        services.AddScoped<IOperadoraRepository, OperadoraRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }
@@ -36,7 +47,16 @@ public static class DependencyInjection
             typeof(OperadoraProfile).Assembly,     
             typeof(ApplicationMappingProfile).Assembly  
         );
-        
+
+        services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(typeof(FaturaHandler).Assembly));
+        services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(typeof(ContratoHandler).Assembly));
+        services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(typeof(OperadoraHandler).Assembly));
+
+
+
         return services;
     }
 } 

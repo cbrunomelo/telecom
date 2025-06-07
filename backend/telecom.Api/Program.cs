@@ -1,3 +1,5 @@
+using telecom.Api.Extensions;
+using telecom.Api.Middlewares;
 using telecom.Application.Extensions;
 using telecom.IoC;
 
@@ -6,25 +8,24 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Configuração do Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerConfiguration();
 
-// Configuração de injeção de dependência
+// Configuração de injeção de dependência das camadas
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 
 var app = builder.Build();
 
+// Middleware de tratamento de exceções (deve ser o primeiro)
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 // Aplicar migrations automaticamente na inicialização
 await app.Services.ApplyMigrationsAsync();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
