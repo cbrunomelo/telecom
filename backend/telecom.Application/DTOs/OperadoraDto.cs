@@ -6,6 +6,5 @@ public record OperadoraDto(
     Guid? Id,
     string Nome,
     ETipoServicoOperadora ETipoServicoOperadora,
-    string ContatoSuporte,
-    int? TotalContratos
+    string ContatoSuporte
 ); 

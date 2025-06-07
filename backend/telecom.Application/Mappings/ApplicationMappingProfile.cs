@@ -33,9 +33,6 @@ public class ApplicationMappingProfile : Profile
             .ConstructUsing(src => new UpdateOperadoraCommand(src.Id ?? Guid.Empty, src.Nome, src.ETipoServicoOperadora, src.ContatoSuporte));
 
         // Mapeamento de Entidades para DTOs
-        //CreateMap<Faturas, FaturaDto>()
-        //    .ForMember(dest => dest.ContratoNomeFilial, opt => opt.MapFrom(src => src.Contrato != null ? src.Contrato.NomeFilial : null))
-        //    .ForMember(dest => dest.Valor, opt => opt.MapFrom(src => src.ValorCobrado));
         CreateMap<Faturas, FaturaDto>()
             .ConstructUsing(src => new FaturaDto(
                 src.Id,
@@ -47,6 +44,11 @@ public class ApplicationMappingProfile : Profile
             ));
 
         CreateMap<Operadora, OperadoraDto>()
-            .ForMember(dest => dest.TotalContratos, opt => opt.MapFrom(src => src.Contratos != null ? src.Contratos.Count : 0));
+            .ConstructUsing(src => new OperadoraDto(
+                src.Id,
+                src.Nome,
+                src.eTipoServicoOperadora,
+                src.ContatoSuporte
+            ));
     }
 } 
