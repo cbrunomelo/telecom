@@ -37,13 +37,16 @@ public class ContratoConfiguration : EntityBaseConfiguration<Contrato>
             .HasColumnName("OPERADORA_ID")
             .IsRequired();
 
-        // Relacionamento com Operadora
         builder.HasOne(e => e.Operadora)
             .WithMany(o => o.Contratos)
             .HasForeignKey(e => e.OperadoraId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Índice para performance
+        builder.HasMany(e => e.Faturas)
+            .WithOne(f => f.Contrato)
+            .HasForeignKey(f => f.ContratoId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasIndex(e => e.OperadoraId)
             .HasDatabaseName("IX_contratos_operadora_id");
     }

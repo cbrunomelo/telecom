@@ -8,13 +8,11 @@ public abstract class EntityBaseConfiguration<T> : IEntityTypeConfiguration<T> w
 {
     public virtual void Configure(EntityTypeBuilder<T> builder)
     {
-        // Configuração padrão do Id
         builder.HasKey(e => e.Id);
         builder.Property(e => e.Id)
             .HasColumnName("id")
             .IsRequired();
 
-        // Configurar propriedades específicas da entidade
         ConfigureEntity(builder);
     }
 

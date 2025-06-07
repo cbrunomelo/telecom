@@ -25,10 +25,9 @@ public class OperadoraConfiguration : EntityBaseConfiguration<Operadora>
             .HasMaxLength(50)
             .IsRequired();
 
-        // Relacionamento com Contratos
         builder.HasMany(e => e.Contratos)
             .WithOne(c => c.Operadora)
             .HasForeignKey(c => c.OperadoraId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 } 

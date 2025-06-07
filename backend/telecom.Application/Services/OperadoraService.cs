@@ -5,7 +5,7 @@ using telecom.Application.Services.Contracts;
 using telecom.Domain.Commands.OperadoraCommands;
 using telecom.Domain.Handlers.Contracts;
 using telecom.Domain.Handlers.Response;
-using telecom.Domain.Repository;
+using telecom.Domain.UnitOfWork;
 
 namespace telecom.Application.Services;
 
@@ -13,16 +13,16 @@ public class OperadoraService : IOperadoraService
 {
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
-    private readonly IOperadoraRepository _operadoraRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public OperadoraService(
         IMediator mediator, 
         IMapper mapper,
-        IOperadoraRepository operadoraRepository)
+        IUnitOfWork unitOfWork)
     {
         _mediator = mediator;
         _mapper = mapper;
-        _operadoraRepository = operadoraRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IHandleResult> CriarOperadoraAsync(OperadoraDto operadoraDto)
@@ -85,7 +85,7 @@ public class OperadoraService : IOperadoraService
     {
         try
         {
-            var operadora = await _operadoraRepository.GetByIdAsync(id);
+            var operadora = await _unitOfWork.Operadoras.GetByIdAsync(id);
             if (operadora == null)
                 return new HandleResult("Operadora não encontrada", "A operadora especificada não existe");
 
@@ -102,7 +102,7 @@ public class OperadoraService : IOperadoraService
     {
         try
         {
-            var operadoras = await _operadoraRepository.GetAllAsync();
+            var operadoras = await _unitOfWork.Operadoras.GetAllAsync();
             var operadorasResponse = _mapper.Map<IEnumerable<OperadoraDto>>(operadoras);
             return new HandleResult(true, "Operadoras obtidas com sucesso", operadorasResponse);
         }

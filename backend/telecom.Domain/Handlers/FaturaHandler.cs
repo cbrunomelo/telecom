@@ -42,7 +42,7 @@ public class FaturaHandler :
 
     public async Task<IHandleResult> Handle(CreateFaturaCommand command, CancellationToken cancellationToken)
     {
-        // Validar o command
+
         if (!command.IsValid())
             return new HandleResult("Não foi possível criar a fatura", command.ValidationErrors);
 
@@ -50,12 +50,10 @@ public class FaturaHandler :
         {
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
-            // Verificar se o contrato existe
             var contratoExists = await _contratoRepository.ExistsAsync(command.ContratoId);
             if (!contratoExists)
                 return new HandleResult("Não foi possível criar a fatura", "Contrato não encontrado");
 
-            // Mapear command para entidade usando AutoMapper
             var fatura = _mapper.Map<Faturas>(command);
 
             var faturaId = await _faturaRepository.CreateAsync(fatura);
@@ -64,7 +62,6 @@ public class FaturaHandler :
 
             fatura.Id = faturaId;
 
-            // Publicar eventos se a entidade suportar notificações
             if (fatura.HasNotifications())
                 await _mediator.PublishAll(fatura);
 
@@ -80,7 +77,7 @@ public class FaturaHandler :
 
     public async Task<IHandleResult> Handle(UpdateFaturaCommand command, CancellationToken cancellationToken)
     {
-        // Validar o command
+
         if (!command.IsValid())
             return new HandleResult("Não foi possível atualizar a fatura", command.ValidationErrors);
 
@@ -88,19 +85,17 @@ public class FaturaHandler :
         {
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
-            // Verificar se a fatura existe
             var faturaExistente = await _faturaRepository.GetByIdAsync(command.Id);
             if (faturaExistente == null)
                 return new HandleResult("Não foi possível atualizar a fatura", "Fatura não encontrada");
 
-            // Atualizar usando o método da entidade (preserva lógica de negócio)
+
             faturaExistente.Atualizar(command.DataVencimento, command.Valor);
 
             var success = await _faturaRepository.UpdateAsync(faturaExistente);
             if (!success)
                 return new HandleResult("Não foi possível atualizar a fatura", "Erro interno");
 
-            // Publicar eventos se a entidade suportar notificações
             if (faturaExistente.HasNotifications())
                 await _mediator.PublishAll(faturaExistente);
 
@@ -116,7 +111,6 @@ public class FaturaHandler :
 
     public async Task<IHandleResult> Handle(DeleteFaturaCommand command, CancellationToken cancellationToken)
     {
-        // Validar o command
         if (!command.IsValid())
             return new HandleResult("Não foi possível deletar a fatura", command.ValidationErrors);
 
@@ -124,7 +118,6 @@ public class FaturaHandler :
         {
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
-            // Verificar se a fatura existe
             var fatura = await _faturaRepository.GetByIdAsync(command.Id);
             if (fatura == null)
                 return new HandleResult("Não foi possível deletar a fatura", "Fatura não encontrada");

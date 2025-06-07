@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore.Storage;
+using telecom.Domain.Repository;
 using telecom.Domain.UnitOfWork;
 using telecom.Infra.Data;
 
@@ -10,10 +11,27 @@ public class UnitOfWork : IUnitOfWork
     private IDbContextTransaction? _transaction;
     private bool _disposed = false;
 
-    public UnitOfWork(TelecomDbContext context)
+    public UnitOfWork(
+        IFaturaRepository faturaRepository,
+        IContratoRepository contratoRepository,
+        IOperadoraRepository operadoraRepository,
+        TelecomDbContext context)
     {
+        Faturas = faturaRepository;
+        Contratos = contratoRepository;
+        Operadoras = operadoraRepository;
         _context = context;
     }
+
+    public IFaturaRepository Faturas { get; }
+    public IContratoRepository Contratos { get; }
+    public IOperadoraRepository Operadoras { get; }
+
+    public async Task<int> CommitAsync()
+        => await _context.SaveChangesAsync();
+
+    public void Rollback()
+        => _context.ChangeTracker.Clear();
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

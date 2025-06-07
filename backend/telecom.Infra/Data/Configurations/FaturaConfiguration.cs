@@ -32,13 +32,7 @@ public class FaturaConfiguration : EntityBaseConfiguration<Faturas>
             .HasColumnName("CONTRATO_ID")
             .IsRequired();
 
-        // Relacionamento com Contrato
-        builder.HasOne(e => e.Contrato)
-            .WithMany()
-            .HasForeignKey(e => e.ContratoId)
-            .OnDelete(DeleteBehavior.Restrict);
 
-        // Índices para performance
         builder.HasIndex(e => e.ContratoId)
             .HasDatabaseName("IX_faturas_contrato_id");
 

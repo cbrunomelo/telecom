@@ -5,7 +5,7 @@ using telecom.Application.Services.Contracts;
 using telecom.Domain.Commands.ContratoCommands;
 using telecom.Domain.Handlers.Contracts;
 using telecom.Domain.Handlers.Response;
-using telecom.Domain.Repository;
+using telecom.Domain.UnitOfWork;
 
 namespace telecom.Application.Services;
 
@@ -13,16 +13,16 @@ public class ContratoService : IContratoService
 {
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
-    private readonly IContratoRepository _contratoRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public ContratoService(
         IMediator mediator, 
         IMapper mapper,
-        IContratoRepository contratoRepository)
+        IUnitOfWork unitOfWork)
     {
         _mediator = mediator;
         _mapper = mapper;
-        _contratoRepository = contratoRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IHandleResult> CriarContratoAsync(ContratoDto contratoDto)
@@ -71,6 +71,7 @@ public class ContratoService : IContratoService
     {
         try
         {
+
             var command = new DeleteContratoCommand(id);
             var result = await _mediator.Send(command);
             return result;
@@ -85,7 +86,7 @@ public class ContratoService : IContratoService
     {
         try
         {
-            var contrato = await _contratoRepository.GetByIdAsync(id);
+            var contrato = await _unitOfWork.Contratos.GetByIdAsync(id);
             if (contrato == null)
                 return new HandleResult("Contrato não encontrado", "O contrato especificado não existe");
 
@@ -102,7 +103,7 @@ public class ContratoService : IContratoService
     {
         try
         {
-            var contratos = await _contratoRepository.GetAllAsync();
+            var contratos = await _unitOfWork.Contratos.GetAllAsync();
             var contratosResponse = _mapper.Map<IEnumerable<ContratoDto>>(contratos);
             return new HandleResult(true, "Contratos obtidos com sucesso", contratosResponse);
         }
@@ -116,7 +117,7 @@ public class ContratoService : IContratoService
     {
         try
         {
-            var contratos = await _contratoRepository.GetByOperadoraIdAsync(operadoraId);
+            var contratos = await _unitOfWork.Contratos.GetByOperadoraIdAsync(operadoraId);
             var contratosResponse = _mapper.Map<IEnumerable<ContratoDto>>(contratos);
             return new HandleResult(true, "Contratos da operadora obtidos com sucesso", contratosResponse);
         }

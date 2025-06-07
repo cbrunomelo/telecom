@@ -17,6 +17,7 @@ public class Contrato : EntityBase
     //navegacao
     public Guid OperadoraId { get; private set; }
     public Operadora Operadora { get; private set; }
+    public ICollection<Faturas> Faturas { get; private set; } = new List<Faturas>();
 
     public Contrato(string nomeFilial, string planoContratado, DateTime dataInicio, DateTime dataVencimento, decimal valorMensal, Guid operadoraId)
     {

@@ -5,7 +5,7 @@ using telecom.Application.Services.Contracts;
 using telecom.Domain.Commands.FaturaCommands;
 using telecom.Domain.Handlers.Contracts;
 using telecom.Domain.Handlers.Response;
-using telecom.Domain.Repository;
+using telecom.Domain.UnitOfWork;
 
 namespace telecom.Application.Services;
 
@@ -13,16 +13,16 @@ public class FaturaService : IFaturaService
 {
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
-    private readonly IFaturaRepository _faturaRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public FaturaService(
         IMediator mediator, 
         IMapper mapper,
-        IFaturaRepository faturaRepository)
+        IUnitOfWork unitOfWork)
     {
         _mediator = mediator;
         _mapper = mapper;
-        _faturaRepository = faturaRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IHandleResult> CriarFaturaAsync(FaturaDto faturaDto)
@@ -85,7 +85,7 @@ public class FaturaService : IFaturaService
     {
         try
         {
-            var fatura = await _faturaRepository.GetByIdAsync(id);
+            var fatura = await _unitOfWork.Faturas.GetByIdAsync(id);
             if (fatura == null)
                 return new HandleResult("Fatura não encontrada", "A fatura especificada não existe");
 
@@ -102,7 +102,7 @@ public class FaturaService : IFaturaService
     {
         try
         {
-            var faturas = await _faturaRepository.GetAllAsync();
+            var faturas = await _unitOfWork.Faturas.GetAllAsync();
             var faturasResponse = _mapper.Map<IEnumerable<FaturaDto>>(faturas);
             return new HandleResult(true, "Faturas obtidas com sucesso", faturasResponse);
         }
@@ -116,7 +116,7 @@ public class FaturaService : IFaturaService
     {
         try
         {
-            var faturas = await _faturaRepository.GetByContratoIdAsync(contratoId);
+            var faturas = await _unitOfWork.Faturas.GetByContratoIdAsync(contratoId);
             var faturasResponse = _mapper.Map<IEnumerable<FaturaDto>>(faturas);
             return new HandleResult(true, "Faturas do contrato obtidas com sucesso", faturasResponse);
         }
