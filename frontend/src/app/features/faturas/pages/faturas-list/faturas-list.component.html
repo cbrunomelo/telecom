@@ -15,7 +15,7 @@
     <div class="col-md-4">
       <app-card
         title="Faturas Pagas"
-        [value]="getFaturasPorStatus(StatusFatura.PAGA)"
+        [value]="getFaturasPorStatus(EFaturaStatus.Paga)"
         icon="check_circle"
         [trend]="calcularTrendPagas()"
         color="success"
@@ -24,7 +24,7 @@
     <div class="col-md-4">
       <app-card
         title="Faturas Atrasadas"
-        [value]="getFaturasPorStatus(StatusFatura.ATRASADA)"
+        [value]="getFaturasPorStatus(EFaturaStatus.Atrasada)"
         icon="warning"
         [trend]="calcularTrendAtrasadas()"
         color="danger"
@@ -36,7 +36,6 @@
     <table class="table table-striped">
       <thead>
         <tr>
-          <th>Número</th>
           <th>Vencimento</th>
           <th>Valor</th>
           <th>Status</th>
@@ -45,12 +44,11 @@
       </thead>
       <tbody>
         <tr *ngFor="let fatura of faturas">
-          <td>{{ fatura.numeroFatura }}</td>
           <td>{{ fatura.dataVencimento | date:'dd/MM/yyyy' }}</td>
           <td>{{ fatura.valor | currency:'BRL' }}</td>
           <td>
             <span [class]="getStatusClass(fatura.status)">
-              {{ fatura.status }}
+              {{ getFaturaStatusTexto(fatura.status) }}
             </span>
           </td>
           <td>

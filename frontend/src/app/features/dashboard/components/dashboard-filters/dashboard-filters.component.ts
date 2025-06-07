@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { DashboardFilters } from '../../../../core/services/fatura.service';
 import { OperadoraService } from '../../../../core/services/operadora.service';
-import { StatusFatura } from '../../../../shared/models/fatura.model';
+import { EFaturaStatus, getFaturaStatusOptions } from '../../../../shared/models/fatura.model';
 import { Operadora } from '../../../../shared/models/operadora.model';
 
 @Component({
@@ -18,7 +18,7 @@ export class DashboardFiltersComponent implements OnInit {
   @Output() filtersChanged = new EventEmitter<DashboardFilters>();
 
   operadoras: Operadora[] = [];
-  statusOptions = Object.values(StatusFatura);
+  statusOptions = getFaturaStatusOptions();
 
   constructor(
     private fb: FormBuilder,

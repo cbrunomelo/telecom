@@ -319,7 +319,7 @@ export class ApiTestComponent implements OnInit {
 
   private async testFaturasAPI(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.faturaService.getAll({ page: 1, pageSize: 10 }).subscribe({
+      this.faturaService.getAll().subscribe({
         next: () => resolve(),
         error: (error) => reject(error)
       });

@@ -1,21 +1,41 @@
-export enum StatusFatura {
-  PAGA = 'PAGA',
-  PENDENTE = 'PENDENTE',
-  ATRASADA = 'ATRASADA'
+export enum EFaturaStatus {
+  Pendente = 1,
+  Paga = 2,
+  Atrasada = 3,
+  Cancelada = 4
 }
 
 export interface Fatura {
   id?: string;
-  numeroFatura: string;
-  contratoId: string;
-  operadoraId: string;
-  dataEmissao: Date;
-  dataVencimento: Date;
   valor: number;
-  status: StatusFatura;
-  dataPagamento?: Date;
-  // Propriedades para compatibilidade com dados mock/frontend
-  observacoes?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  dataVencimento: Date;
+  contratoId: string;
+  status: EFaturaStatus;
+  dateEmissao?: Date;
+}
+
+// Função utilitária para converter enum em texto
+export function getFaturaStatusTexto(status: EFaturaStatus): string {
+  switch (status) {
+    case EFaturaStatus.Pendente:
+      return 'Pendente';
+    case EFaturaStatus.Paga:
+      return 'Paga';
+    case EFaturaStatus.Atrasada:
+      return 'Atrasada';
+    case EFaturaStatus.Cancelada:
+      return 'Cancelada';
+    default:
+      return 'Não definido';
+  }
+}
+
+// Função para obter opções do select
+export function getFaturaStatusOptions() {
+  return [
+    { label: getFaturaStatusTexto(EFaturaStatus.Pendente), value: EFaturaStatus.Pendente },
+    { label: getFaturaStatusTexto(EFaturaStatus.Paga), value: EFaturaStatus.Paga },
+    { label: getFaturaStatusTexto(EFaturaStatus.Atrasada), value: EFaturaStatus.Atrasada },
+    { label: getFaturaStatusTexto(EFaturaStatus.Cancelada), value: EFaturaStatus.Cancelada }
+  ];
 } 

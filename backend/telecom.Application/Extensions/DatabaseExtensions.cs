@@ -27,7 +27,11 @@ public static class DatabaseExtensions
                     await context.Database.MigrateAsync();
                 }
 
-                await DatabaseSeeder.SeedAsync(serviceProvider);
+                var hasOperadoras = await context.Operadoras.AnyAsync();
+                if (!hasOperadoras)
+                {
+                    await DatabaseSeeder.SeedAsync(serviceProvider);
+                }
                 
                 return;
             }

@@ -4,36 +4,44 @@
       <h2>{{ isEditing ? 'Editar' : 'Nova' }} Fatura</h2>
     </div>
     <div class="card-body">
+      <!-- Exibe erros de validação da API -->
+      <app-validation-errors 
+        [errors]="validationErrors"
+        title="Erro ao salvar fatura"
+        [showIcon]="true">
+      </app-validation-errors>
+
       <form [formGroup]="faturaForm" (ngSubmit)="onSubmit()" class="row g-3">
         <div class="col-md-6">
           <app-select-input
+            [formControl]="$any(faturaForm.controls.operadoraId)"
+            label="Operadora"
+            placeholder="Selecione uma operadora"
+            [options]="operadorasOptions"
+            icon="building"
+            formControlName="operadoraId"
+          ></app-select-input>
+        </div>
+
+        <div class="col-md-6">
+          <app-select-input
             [formControl]="$any(faturaForm.controls.contratoId)"
-            label="Contrato"
-            placeholder="Selecione um contrato"
-            [options]="(contratosOptions$ | async) ?? []"
+            label="Contrato *"
+            [placeholder]="contratosOptions.length === 0 ? 'Selecione primeiro uma operadora' : 'Selecione um contrato'"
+            [options]="contratosOptions"
             [errorMessage]="faturaForm.controls.contratoId.errors?.['required'] && faturaForm.controls.contratoId.touched ? 'Contrato é obrigatório' : ''"
+            [disabled]="contratosOptions.length === 0"
             icon="file-contract"
             formControlName="contratoId"
           ></app-select-input>
         </div>
 
         <div class="col-md-6">
-          <app-text-input
-            [formControl]="$any(faturaForm.controls.numeroFatura)"
-            label="Número da Fatura"
-            placeholder="Digite o número da fatura"
-            [errorMessage]="faturaForm.controls.numeroFatura.errors?.['required'] && faturaForm.controls.numeroFatura.touched ? 'Número da fatura é obrigatório' : ''"
-            icon="hashtag"
-            formControlName="numeroFatura"
-          ></app-text-input>
-        </div>
-
-        <div class="col-md-6">
           <app-date-input
-            [formControl]="$any(faturaForm.controls.dataEmissao)"
+            [formControl]="$any(faturaForm.controls.dateEmissao)"
             label="Data de Emissão"
             [disabled]="true"
-            formControlName="dataEmissao"
+            formControlName="dateEmissao"
           ></app-date-input>
         </div>
 
@@ -46,7 +54,7 @@
           ></app-date-input>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <app-currency-input
             [formControl]="$any(faturaForm.controls.valor)"
             label="Valor"
@@ -55,7 +63,7 @@
           ></app-currency-input>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <app-select-input
             [formControl]="$any(faturaForm.controls.status)"
             label="Status"
@@ -67,14 +75,7 @@
           ></app-select-input>
         </div>
 
-        <div class="col-md-4" *ngIf="faturaForm.get('status')?.value === 'PAGA'">
-          <app-date-input
-            [formControl]="$any(faturaForm.controls.dataPagamento)"
-            label="Data de Pagamento"
-            [errorMessage]="faturaForm.controls.dataPagamento.errors?.['required'] && faturaForm.controls.dataPagamento.touched ? 'Data de pagamento é obrigatória' : ''"
-            formControlName="dataPagamento"
-          ></app-date-input>
-        </div>
+
 
         <div class="col-12 d-flex gap-2 justify-content-end">
           <button type="button" class="btn btn-secondary" routerLink="/faturas">
