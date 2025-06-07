@@ -13,7 +13,7 @@ public static class DatabaseExtensions
         var context = scope.ServiceProvider.GetRequiredService<TelecomDbContext>();
         
         const int maxRetries = 10;
-        const int delayBetweenRetries = 3000; // 3 segundos
+        const int delayBetweenRetries = 3000;
         
         for (int i = 0; i < maxRetries; i++)
         {

@@ -159,20 +159,4 @@ public static class DatabaseSeeder
             return EFaturaStatus.Pendente;
     }
 
-    public static async Task LimparDadosAsync(IServiceProvider serviceProvider)
-    {
-        using var scope = serviceProvider.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<TelecomDbContext>();
-
-        try
-        {
-            await context.Database.ExecuteSqlRawAsync("DELETE FROM \"Faturas\"");
-            await context.Database.ExecuteSqlRawAsync("DELETE FROM \"Contratos\"");
-            await context.Database.ExecuteSqlRawAsync("DELETE FROM \"Operadoras\"");
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
-    }
 } 
