@@ -1,43 +1,54 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Operadora } from '../../shared/models/operadora.model';
-import { OPERADORAS } from '../mock/mock-data';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OperadoraService {
-  private operadoras = OPERADORAS;
 
+  constructor(private apiService: ApiService) {}
+
+  /**
+   * Busca todas as operadoras
+   */
   getAll(): Observable<Operadora[]> {
-    return of(this.operadoras);
+    return this.apiService.get<Operadora[]>('/operadora');
   }
 
+  /**
+   * Busca uma operadora por ID
+   */
   getById(id: number): Observable<Operadora> {
-    const operadora = this.operadoras.find(o => o.id === id);
-    return of(operadora!);
+    return this.apiService.get<Operadora>(`/operadora/${id}`);
   }
 
+  /**
+   * Cria uma nova operadora
+   */
   create(operadora: Operadora): Observable<Operadora> {
-    operadora.id = this.operadoras.length + 1;
-    this.operadoras.push(operadora);
-    return of(operadora);
+    return this.apiService.post<Operadora>('/operadora', operadora);
   }
 
+  /**
+   * Atualiza uma operadora existente
+   */
   update(id: number, operadora: Operadora): Observable<Operadora> {
-    const index = this.operadoras.findIndex(o => o.id === id);
-    if (index !== -1) {
-      this.operadoras[index] = { ...operadora, id };
-      return of(this.operadoras[index]);
-    }
-    return of(operadora);
+    return this.apiService.put<Operadora>(`/operadora/${id}`, operadora);
   }
 
+  /**
+   * Deleta uma operadora
+   */
   delete(id: number): Observable<void> {
-    const index = this.operadoras.findIndex(o => o.id === id);
-    if (index !== -1) {
-      this.operadoras.splice(index, 1);
-    }
-    return of(void 0);
+    return this.apiService.delete<void>(`/operadora/${id}`);
+  }
+
+  /**
+   * Atualiza parcialmente uma operadora
+   */
+  patch(id: number, operadora: Partial<Operadora>): Observable<Operadora> {
+    return this.apiService.patch<Operadora>(`/operadora/${id}`, operadora);
   }
 } 

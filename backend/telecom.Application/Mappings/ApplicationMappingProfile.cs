@@ -50,5 +50,16 @@ public class ApplicationMappingProfile : Profile
                 src.eTipoServicoOperadora,
                 src.ContatoSuporte
             ));
+
+        CreateMap<Contrato, ContratoDto>()
+            .ConstructUsing(src => new ContratoDto(
+                src.Id,
+                src.NomeFilial,
+                src.PlanoContratado,
+                src.DataInicio,
+                src.DataVencimento,
+                src.ValorMensal,
+                src.OperadoraId
+            ));
     }
 } 

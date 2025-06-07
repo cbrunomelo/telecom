@@ -51,14 +51,36 @@ export class ContratosListComponent implements OnInit {
   }
 
   carregarContratos(): void {
-    this.contratoService.getAll().subscribe(
-      (contratos: Contrato[]) => {
-        const start = (this.currentPage - 1) * this.pageSize;
-        const end = start + this.pageSize;
-        this.contratos = contratos.slice(start, end);
-        this.totalItems = contratos.length;
+    this.contratoService.getAll().subscribe({
+      next: (data: any) => {
+        // Verifica se a resposta é paginada (tem propriedades items, total, etc.)
+        if (data && typeof data === 'object' && 'items' in data && 'total' in data) {
+          // Resposta paginada do backend
+          this.contratos = data.items;
+          this.totalItems = data.total;
+        } else if (Array.isArray(data)) {
+          // Resposta simples (array de contratos) - faz paginação no frontend
+          const start = (this.currentPage - 1) * this.pageSize;
+          const end = start + this.pageSize;
+          this.contratos = data.slice(start, end);
+          this.totalItems = data.length;
+        } else {
+          console.warn('Formato de resposta inesperado:', data);
+          this.contratos = [];
+          this.totalItems = 0;
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar contratos:', error);
+        this.snackBar.open('Erro ao carregar contratos: ' + error.message, 'Fechar', {
+          duration: 5000,
+          horizontalPosition: 'end',
+          panelClass: ['error-snackbar']
+        });
+        this.contratos = [];
+        this.totalItems = 0;
       }
-    );
+    });
   }
 
   onPageChange(event: PageEvent): void {

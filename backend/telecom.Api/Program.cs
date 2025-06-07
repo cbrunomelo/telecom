@@ -16,6 +16,17 @@ builder.Services.AddSwaggerConfiguration();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+
 var app = builder.Build();
 
 // Middleware de tratamento de exceções (deve ser o primeiro)
@@ -26,6 +37,8 @@ await app.Services.ApplyMigrationsAsync();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseCors("AllowAll");
+
 
 app.UseHttpsRedirection();
 

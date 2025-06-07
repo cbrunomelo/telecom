@@ -19,6 +19,10 @@ export const routes: Routes = [
     loadChildren: () => import('./features/operadoras/operadoras.module').then(m => m.OperadorasModule)
   },
   {
+    path: 'api-test',
+    loadComponent: () => import('./core/components/api-test/api-test.component').then(c => c.ApiTestComponent)
+  },
+  {
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full'
