@@ -7,6 +7,5 @@ public record ContratoDto(
     DateTime DataInicio,
     DateTime DataVencimento,
     decimal ValorMensal,
-    Guid OperadoraId,
-    string? OperadoraNome
+    Guid OperadoraId
 ); 

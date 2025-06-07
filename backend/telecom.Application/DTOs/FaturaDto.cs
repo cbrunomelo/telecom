@@ -8,6 +8,5 @@ public record FaturaDto(
     DateTime DataVencimento,
     Guid ContratoId,
     EFaturaStatus Status,
-    DateTime? DateEmissao,
-    string? ContratoNomeFilial
+    DateTime? DateEmissao
 ); 
