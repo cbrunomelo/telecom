@@ -14,6 +14,7 @@ import { TextInputComponent } from '../../../shared/inputs/text-input/text-input
 import { SelectInputComponent } from '../../../shared/inputs/select-input/select-input.component';
 import { DateInputComponent } from '../../../shared/inputs/date-input/date-input.component';
 import { CurrencyInputComponent } from '../../../shared/inputs/currency-input/currency-input.component';
+import { ValidationErrorsComponent } from '../../../shared/components/validation-errors/validation-errors.component';
 
 interface SelectOption {
   label: string;
@@ -33,7 +34,8 @@ interface SelectOption {
     TextInputComponent,
     SelectInputComponent,
     DateInputComponent,
-    CurrencyInputComponent
+    CurrencyInputComponent,
+    ValidationErrorsComponent
   ]
 })
 export class ContratoFormComponent implements OnInit {
@@ -66,6 +68,7 @@ export class ContratoFormComponent implements OnInit {
 
   isEditing = false;
   contratoId: number | null = null;
+  validationErrors: string[] = [];
 
   constructor(
     private formBuilder: NonNullableFormBuilder,
@@ -114,6 +117,9 @@ export class ContratoFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    // Limpa erros de validação anteriores
+    this.validationErrors = [];
+    
     if (this.contratoForm.valid) {
       const formValue = this.contratoForm.getRawValue();
       const contrato: Partial<Contrato> = {
@@ -140,7 +146,10 @@ export class ContratoFormComponent implements OnInit {
           );
           this.router.navigate(['/contratos']);
         },
-        error: () => {
+        error: (error) => {
+          // Captura erros de validação da API
+          this.extractValidationErrors(error);
+          
           this.snackBar.open(
             this.isEditing ? 'Erro ao atualizar contrato' : 'Erro ao criar contrato',
             'Fechar',
@@ -164,5 +173,30 @@ export class ContratoFormComponent implements OnInit {
   private formatDateForInput(date: Date): string {
     const d = new Date(date);
     return d.toISOString().split('T')[0];
+  }
+
+  private extractValidationErrors(error: any): void {
+    this.validationErrors = [];
+    
+    try {
+      // Tenta extrair erros do formato ApiResponse (HandleResult)
+      if (error.error && error.error.errors && Array.isArray(error.error.errors)) {
+        this.validationErrors = error.error.errors;
+      }
+      // Tenta extrair erros de outras possíveis estruturas
+      else if (error.errors && Array.isArray(error.errors)) {
+        this.validationErrors = error.errors;
+      }
+      // Se for uma string simples
+      else if (typeof error.message === 'string') {
+        this.validationErrors = [error.message];
+      }
+      // Fallback para erro genérico
+      else {
+        this.validationErrors = ['Ocorreu um erro ao processar a solicitação'];
+      }
+    } catch (e) {
+      this.validationErrors = ['Erro inesperado ao processar resposta do servidor'];
+    }
   }
 } 

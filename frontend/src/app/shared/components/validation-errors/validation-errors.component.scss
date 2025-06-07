@@ -1,0 +1,29 @@
+// Estilos para lista de erros de validação
+.validation-errors {
+  .error-item {
+    color: #721c24;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+    line-height: 1.4;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Personalização do alert
+.alert-danger {
+  border-color: #f5c2c7;
+  background-color: #f8d7da;
+  
+  h6 {
+    color: #721c24;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+  
+  .fas {
+    color: #721c24;
+  }
+} 

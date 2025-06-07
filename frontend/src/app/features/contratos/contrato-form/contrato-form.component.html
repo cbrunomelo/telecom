@@ -4,6 +4,12 @@
       <h2>{{ isEditing ? 'Editar' : 'Novo' }} Contrato</h2>
     </div>
     <div class="card-body">
+      <!-- Seção de Erros de Validação -->
+      <app-validation-errors 
+        [errors]="validationErrors"
+        [title]="'Erro' + (validationErrors.length > 1 ? 's' : '') + ' de Validação'">
+      </app-validation-errors>
+
       <form [formGroup]="contratoForm" (ngSubmit)="onSubmit()">
         <div class="row">
           <div class="col-md-6">
