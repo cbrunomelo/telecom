@@ -82,7 +82,8 @@ public class ContratoHandler :
                 command.PlanoContratado,
                 command.DataInicio,
                 command.DataVencimento,
-                command.ValorMensal
+                command.ValorMensal,
+                command.OperadoraId
             );
 
             var success = await _unitOfWork.Contratos.UpdateAsync(contratoExistente);

@@ -69,7 +69,7 @@ export class FaturaFormComponent implements OnInit {
     this.contratos$ = this.contratoService.getAll();
     this.contratosOptions$ = this.contratos$.pipe(
       map(contratos => contratos.map(contrato => ({
-        label: `${contrato.numero} - ${contrato.nomeFilial}`,
+        label: `${contrato.nomeFilial} - ${contrato.planoContratado}`,
         value: contrato.id
       })))
     );

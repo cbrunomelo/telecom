@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { Observable, of, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { ContratoService } from '../../../core/services/contrato.service';
 import { OperadoraService } from '../../../core/services/operadora.service';
 import { Operadora } from '../../../shared/models/operadora.model';
-import { Contrato, StatusContrato } from '../../../shared/models/contrato.model';
+import { Contrato } from '../../../shared/models/contrato.model';
 import { TextInputComponent } from '../../../shared/inputs/text-input/text-input.component';
 import { SelectInputComponent } from '../../../shared/inputs/select-input/select-input.component';
 import { DateInputComponent } from '../../../shared/inputs/date-input/date-input.component';
@@ -41,34 +41,20 @@ interface SelectOption {
 export class ContratoFormComponent implements OnInit {
   contratoForm = this.formBuilder.group({
     nomeFilial: ['', Validators.required],
-    numero: ['', Validators.required],
     operadoraId: ['', Validators.required],
     planoContratado: ['', Validators.required],
     dataInicio: ['', Validators.required],
-    dataFim: [''],
     dataVencimento: ['', Validators.required],
     valorMensal: [0, [Validators.required, Validators.min(0)]],
-    status: [StatusContrato.ATIVO, Validators.required],
-    tipo: ['INTERNET' as 'INTERNET' | 'TELEFONIA' | 'TV', Validators.required]
   });
 
-  operadoras$: Observable<Operadora[]>;
-  operadorasOptions$: Observable<SelectOption[]>;
-  
-  statusOptions: SelectOption[] = Object.values(StatusContrato).map(status => ({
-    label: status,
-    value: status
-  }));
-
-  tipoOptions: SelectOption[] = [
-    { label: 'Internet', value: 'INTERNET' },
-    { label: 'Telefonia', value: 'TELEFONIA' },
-    { label: 'TV', value: 'TV' }
-  ];
+  operadoras: Operadora[] = [];
+  operadorasOptions: SelectOption[] = [];
 
   isEditing = false;
   contratoId: string | null = null;
   validationErrors: string[] = [];
+  isLoading = true;
 
   constructor(
     private formBuilder: NonNullableFormBuilder,
@@ -78,15 +64,7 @@ export class ContratoFormComponent implements OnInit {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
   ) {
-    this.operadoras$ = this.operadoraService.getAll().pipe(
-      map(result => result.items)
-    );
-    this.operadorasOptions$ = this.operadoras$.pipe(
-      map(operadoras => operadoras.map(operadora => ({
-        label: `${operadora.nome} - ${operadora.tipoServico}`,
-        value: operadora.id || ''
-      })))
-    );
+    // Propriedades são inicializadas no ngOnInit
   }
 
   ngOnInit(): void {
@@ -96,23 +74,87 @@ export class ContratoFormComponent implements OnInit {
         if (id) {
           this.isEditing = true;
           this.contratoId = id;
-          return this.contratoService.getById(id);
+          // Carrega contrato e operadoras simultaneamente
+          return forkJoin({
+            contrato: this.contratoService.getById(id),
+            operadoras: this.operadoraService.getAll()
+          });
         }
-        return of(null);
+        // Se não for edição, só carrega as operadoras
+        return forkJoin({
+          contrato: of(null),
+          operadoras: this.operadoraService.getAll()
+        });
       })
-    ).subscribe(contrato => {
-      if (contrato) {
-        this.contratoForm.patchValue({
-          nomeFilial: contrato.nomeFilial,
-          numero: contrato.numero,
-          operadoraId: contrato.operadoraId,
-          planoContratado: contrato.planoContratado,
-          dataInicio: this.formatDateForInput(contrato.dataInicio),
-          dataFim: contrato.dataFim ? this.formatDateForInput(contrato.dataFim) : '',
-          dataVencimento: this.formatDateForInput(contrato.dataVencimento),
-          valorMensal: contrato.valorMensal,
-          status: contrato.status,
-          tipo: contrato.tipo
+    ).subscribe({
+      next: ({ contrato, operadoras }) => {
+        console.log('Dados carregados:', { contrato, operadoras });
+        console.log('Estrutura operadoras:', operadoras);
+        
+        // Configura as operadoras disponíveis - trata diferentes estruturas de resposta
+        const operadorasData = operadoras as any;
+        if (Array.isArray(operadorasData)) {
+          // Se operadoras é um array direto
+          this.operadoras = operadorasData;
+        } else if (operadorasData && operadorasData.items && Array.isArray(operadorasData.items)) {
+          // Se operadoras tem a propriedade items
+          this.operadoras = operadorasData.items;
+        } else if (operadorasData && operadorasData.data && Array.isArray(operadorasData.data)) {
+          // Se operadoras tem a propriedade data
+          this.operadoras = operadorasData.data;
+        } else {
+          // Fallback - array vazio
+          console.error('Estrutura de operadoras não reconhecida:', operadoras);
+          this.operadoras = [];
+        }
+        
+        this.operadorasOptions = (this.operadoras || []).map(operadora => ({
+          label: `${operadora.nome} - ${operadora.tipoServico}`,
+          value: operadora.id || ''
+        }));
+        
+        console.log('Operadoras processadas:', this.operadoras);
+        console.log('Operadoras options:', this.operadorasOptions);
+        
+        if (contrato && typeof contrato === 'object') {
+          console.log('Preenchendo formulário com contrato:', contrato);
+          
+          try {
+            this.contratoForm.patchValue({
+              nomeFilial: contrato.nomeFilial || '',
+              operadoraId: contrato.operadoraId || '',
+              planoContratado: contrato.planoContratado || '',
+              dataInicio: contrato.dataInicio ? this.formatDateForInput(contrato.dataInicio) : '',
+              dataVencimento: contrato.dataVencimento ? this.formatDateForInput(contrato.dataVencimento) : '',
+              valorMensal: contrato.valorMensal || 0
+            });
+            
+            console.log('Operadora selecionada:', contrato.operadoraId);
+            console.log('Operadoras disponíveis:', (this.operadoras || []).map(op => ({ id: op.id, nome: op.nome })));
+            
+            // Força a atualização do select após um pequeno delay para garantir que as opções estejam carregadas
+            setTimeout(() => {
+              if (contrato.operadoraId) {
+                this.contratoForm.patchValue({
+                  operadoraId: contrato.operadoraId
+                });
+                console.log('Operadora forçada:', contrato.operadoraId);
+              }
+            }, 100);
+          } catch (error) {
+            console.error('Erro ao preencher formulário:', error);
+          }
+        }
+        
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar dados:', error);
+        this.isLoading = false;
+        this.snackBar.open('Erro ao carregar dados', 'Fechar', {
+          duration: 3000,
+          horizontalPosition: 'end',
+          panelClass: ['error-snackbar']
         });
       }
     });
@@ -127,7 +169,6 @@ export class ContratoFormComponent implements OnInit {
       const contrato: Partial<Contrato> = {
         ...formValue,
         dataInicio: new Date(formValue.dataInicio),
-        dataFim: formValue.dataFim ? new Date(formValue.dataFim) : undefined,
         dataVencimento: new Date(formValue.dataVencimento)
       };
 

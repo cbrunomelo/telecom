@@ -23,7 +23,7 @@ public class ApplicationMappingProfile : Profile
             .ConstructUsing(src => new CreateContratoCommand(src.NomeFilial, src.PlanoContratado, src.DataInicio, src.DataVencimento, src.ValorMensal, src.OperadoraId));
 
         CreateMap<ContratoDto, UpdateContratoCommand>()
-            .ConstructUsing(src => new UpdateContratoCommand(src.Id ?? Guid.Empty, src.NomeFilial, src.PlanoContratado, src.DataInicio, src.DataVencimento, src.ValorMensal));
+            .ConstructUsing(src => new UpdateContratoCommand(src.Id ?? Guid.Empty, src.NomeFilial, src.PlanoContratado, src.DataInicio, src.DataVencimento, src.ValorMensal, src.OperadoraId));
 
         // Mapeamento de DTOs para Commands - Operadora
         CreateMap<OperadoraDto, CreateOperadoraCommand>()

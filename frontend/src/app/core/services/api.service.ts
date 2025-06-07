@@ -103,7 +103,14 @@ export class ApiService {
     return this.http
       .delete<ApiResponse<T>>(`${this.apiUrl}${endpoint}`, this.httpOptions)
       .pipe(
-        map(response => this.extractData<T>(response)),
+        map(response => {
+          // Para DELETE, muitas vezes a resposta pode ser vazia
+          if (!response) {
+            // Se não há resposta, assume sucesso para DELETE
+            return null as unknown as T;
+          }
+          return this.extractData<T>(response);
+        }),
         catchError(this.handleError)
       );
   }
@@ -129,6 +136,13 @@ export class ApiService {
    * @returns Dados extraídos
    */
   private extractData<T>(response: ApiResponse<T>): T {
+    // Verifica se a resposta é nula ou undefined
+    if (!response) {
+      console.error('Resposta da API é nula ou undefined');
+      throw new Error('Resposta da API é nula ou undefined');
+    }
+
+    // Mantendo "sucess" como está na interface (typo do backend)
     if (!response.sucess) {
       const errorMessage = response.message || 'Erro na requisição';
       const errors = response.errors?.join(', ') || '';

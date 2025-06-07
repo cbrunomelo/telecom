@@ -12,8 +12,9 @@ public class UpdateContratoCommand : CommandBase<UpdateContratoCommand>
     public DateTime DataInicio { get; set; }
     public DateTime DataVencimento { get; set; }
     public decimal ValorMensal { get; set; }
-    
-    public UpdateContratoCommand(Guid id, string nomeFilial, string planoContratado, DateTime dataInicio, DateTime dataVencimento, decimal valorMensal)
+    public Guid OperadoraId { get; set; }
+
+    public UpdateContratoCommand(Guid id, string nomeFilial, string planoContratado, DateTime dataInicio, DateTime dataVencimento, decimal valorMensal, Guid operadoraId)
     {
         Id = id;
         NomeFilial = nomeFilial;
@@ -21,6 +22,7 @@ public class UpdateContratoCommand : CommandBase<UpdateContratoCommand>
         DataInicio = dataInicio;
         DataVencimento = dataVencimento;
         ValorMensal = valorMensal;
+        OperadoraId = operadoraId;
     }
 
     protected override IValidator<UpdateContratoCommand> GetValidator() => new UpdateContratoCommandValidator();

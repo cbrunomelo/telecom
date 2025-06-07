@@ -30,13 +30,14 @@ public class Contrato : EntityBase
     }
     public Contrato(){}
 
-    public void Atualizar(string nomeFilial, string planoContratado, DateTime dataInicio, DateTime dataVencimento, decimal valorMensal)
+    public void Atualizar(string nomeFilial, string planoContratado, DateTime dataInicio, DateTime dataVencimento, decimal valorMensal, Guid operadoraId)
     {
         NomeFilial = nomeFilial;
         PlanoContratado = planoContratado;
         DataInicio = dataInicio;
         DataVencimento = dataVencimento;
         ValorMensal = valorMensal;
+        OperadoraId = operadoraId;
     }
 
     public override string ToString() => $"Contrato: {NomeFilial}, Plano: {PlanoContratado}, Data Início: {DataInicio.ToShortDateString()}, Data Vencimento: {DataVencimento.ToShortDateString()}, Valor Mensal: {ValorMensal:C}";
