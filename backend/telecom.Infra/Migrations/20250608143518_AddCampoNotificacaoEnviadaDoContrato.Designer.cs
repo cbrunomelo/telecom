@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using telecom.Infra.Data;
@@ -11,9 +12,11 @@ using telecom.Infra.Data;
 namespace telecom.Infra.Migrations
 {
     [DbContext(typeof(TelecomDbContext))]
-    partial class TelecomDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250608143518_AddCampoNotificacaoEnviadaDoContrato")]
+    partial class AddCampoNotificacaoEnviadaDoContrato
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

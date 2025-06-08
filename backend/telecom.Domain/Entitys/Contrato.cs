@@ -13,6 +13,7 @@ public class Contrato : EntityBase
     public DateTime DataInicio { get; private set; }
     public DateTime DataVencimento { get; private set; }
     public decimal ValorMensal { get; private set; }
+    public bool NotificacaoVencimentoEnviada { get; private set; } = false;
 
     //navegacao
     public Guid OperadoraId { get; private set; }
@@ -39,6 +40,8 @@ public class Contrato : EntityBase
         ValorMensal = valorMensal;
         OperadoraId = operadoraId;
     }
+
+    public void NotificacaoEmailVencimentoEnviada() => NotificacaoVencimentoEnviada = true;    
 
     public override string ToString() => $"Contrato: {NomeFilial}, Plano: {PlanoContratado}, Data Início: {DataInicio.ToShortDateString()}, Data Vencimento: {DataVencimento.ToShortDateString()}, Valor Mensal: {ValorMensal:C}";
 }

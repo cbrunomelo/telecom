@@ -126,4 +126,18 @@ public class ContratoService : IContratoService
             return new HandleResult("Erro interno ao buscar contratos da operadora", ex.Message);
         }
     }
+
+    public async Task<IHandleResult> ObterContratosVencendoAsync(int vencimentoEm)
+    {
+        try
+        {
+            var contratos = await _unitOfWork.Contratos.GetContratosVencendoAsync(vencimentoEm);
+            var contratosResponse = _mapper.Map<IEnumerable<ContratoDto>>(contratos);
+            return new HandleResult(true, "Contratos vencendo obtidos com sucesso", contratosResponse);
+        }
+        catch (Exception ex)
+        {
+            return new HandleResult("Erro interno ao buscar contratos vencendo", ex.Message);
+        }
+    }
 } 

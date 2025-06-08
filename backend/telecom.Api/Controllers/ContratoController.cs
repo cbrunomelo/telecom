@@ -99,4 +99,15 @@ public class ContratoController : ControllerBase
         
         return BadRequest(result);
     }
+
+    [HttpGet("contratos-vencendo/{vencendoEm}")]
+    public async Task<IActionResult> ObterContratosVencendo(int vencendoEm)
+    {
+        var result = await _contratoService.ObterContratosVencendoAsync(vencendoEm);
+
+        if (result.Sucess)
+            return Ok(result);
+
+        return BadRequest(result);
+    }
 } 

@@ -11,4 +11,5 @@ public interface IContratoService
     Task<IHandleResult> ObterContratoPorIdAsync(Guid id);
     Task<IHandleResult> ObterTodosContratosAsync();
     Task<IHandleResult> ObterContratosPorOperadoraAsync(Guid operadoraId);
+    Task<IHandleResult> ObterContratosVencendoAsync(int vencimentoEm);
 } 

@@ -27,6 +27,8 @@ services:
       context: ../backend
       dockerfile: telecom.Api/Dockerfile
     container_name: telecom-backend
+    ports:
+      - "5000:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=postgres;Database=telecom;Username=telecom_user;Password=telecom_password
@@ -40,6 +42,8 @@ services:
   postgres:
     image: postgres:15
     container_name: telecom-postgres
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_DB: telecom
       POSTGRES_USER: telecom_user

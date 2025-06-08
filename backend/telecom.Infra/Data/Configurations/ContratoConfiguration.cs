@@ -47,6 +47,9 @@ public class ContratoConfiguration : EntityBaseConfiguration<Contrato>
             .HasForeignKey(f => f.ContratoId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.Property(e => e.NotificacaoVencimentoEnviada)
+            .HasColumnName("NOTIFICACAO_VENCIMENTO_ENVIADA");
+
         builder.HasIndex(e => e.OperadoraId)
             .HasDatabaseName("IX_contratos_operadora_id");
     }

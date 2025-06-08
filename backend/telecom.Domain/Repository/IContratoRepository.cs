@@ -11,4 +11,5 @@ public interface IContratoRepository
     Task<IEnumerable<Contrato>> GetAllAsync();
     Task<IEnumerable<Contrato>> GetByOperadoraIdAsync(Guid operadoraId);
     Task<bool> ExistsAsync(Guid id);
+    Task<IEnumerable<Contrato>> GetContratosVencendoAsync(int vencimentoEm);
 } 

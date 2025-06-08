@@ -59,4 +59,20 @@ public class ContratoRepository : IContratoRepository
     {
         return await _baseRepository.ExistsAsync(id);
     }
+
+    public async Task<IEnumerable<Contrato>> GetContratosVencendoAsync(int vencimentoEm)
+    {
+        var hoje = DateTime.UtcNow.Date;
+        var limite = hoje.AddDays(vencimentoEm).Date;
+
+        var QUERY = await  _baseRepository.Query()
+            .Where(c => c.DataVencimento.Date >= hoje && c.DataVencimento.Date <= limite && c.NotificacaoVencimentoEnviada == false)
+            .Include(c => c.Operadora)
+            .OrderBy(c => c.DataVencimento)
+            .ToListAsync();
+
+        Console.WriteLine(QUERY.ToString());
+
+        return QUERY.ToList();
+    }
 } 
