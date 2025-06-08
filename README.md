@@ -35,7 +35,7 @@ Sistema completo para gestão de contratos de telecomunicações com frontend An
 
 ## 🐳 Serviços incluídos
 
-| Serviço | Porta | Descrição |
+| Serviço | Porta(Host) | Descrição |
 |---------|-------|-----------|
 | **Nginx** | 80 | Proxy reverso (ponto de entrada) |
 | **Frontend** |  | Aplicação Angular |
