@@ -26,6 +26,7 @@ import { Fatura, EFaturaStatus, getFaturaStatusTexto } from '../../../../shared/
 })
 export class FaturasListComponent implements OnInit {
   faturas: Fatura[] = [];
+  todasFaturas: Fatura[] = [];
   EFaturaStatus = EFaturaStatus;
   
   pageSize = 10;
@@ -55,15 +56,20 @@ export class FaturasListComponent implements OnInit {
     this.faturaService.getAll().subscribe({
       next: (data: any) => {
         if (data && typeof data === 'object' && 'items' in data && 'total' in data) {
-          this.faturas = data.items;
+          this.todasFaturas = data.items;
           this.totalItems = data.total;
+          const start = (this.currentPage - 1) * this.pageSize;
+          const end = start + this.pageSize;
+          this.faturas = this.todasFaturas.slice(start, end);
         } else if (Array.isArray(data)) {
+          this.todasFaturas = data;
+          this.totalItems = data.length;
           const start = (this.currentPage - 1) * this.pageSize;
           const end = start + this.pageSize;
           this.faturas = data.slice(start, end);
-          this.totalItems = data.length;
         } else {
           this.faturas = [];
+          this.todasFaturas = [];
           this.totalItems = 0;
         }
       },
@@ -74,6 +80,7 @@ export class FaturasListComponent implements OnInit {
           panelClass: ['error-snackbar']
         });
         this.faturas = [];
+        this.todasFaturas = [];
         this.totalItems = 0;
       }
     });
@@ -82,7 +89,9 @@ export class FaturasListComponent implements OnInit {
   onPageChange(event: PageEvent): void {
     this.currentPage = event.pageIndex + 1;
     this.pageSize = event.pageSize;
-    this.carregarFaturas();
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    this.faturas = this.todasFaturas.slice(start, end);
   }
 
   getStatusClass(status: EFaturaStatus): string {
@@ -94,25 +103,25 @@ export class FaturasListComponent implements OnInit {
   }
 
   getFaturasPorStatus(status: EFaturaStatus): number {
-    if (!this.faturas || !Array.isArray(this.faturas)) return 0;
-    return this.faturas.filter(f => f.status === status).length;
+    if (!this.todasFaturas || !Array.isArray(this.todasFaturas)) return 0;
+    return this.todasFaturas.filter(f => f.status === status).length;
   }
 
   calcularValorTotal(): number {
-    if (!this.faturas || !Array.isArray(this.faturas)) return 0;
-    return this.faturas.reduce((total, fatura) => total + fatura.valor, 0);
+    if (!this.todasFaturas || !Array.isArray(this.todasFaturas)) return 0;
+    return this.todasFaturas.reduce((total, fatura) => total + fatura.valor, 0);
   }
 
   calcularTrendPagas(): number {
-    if (!this.faturas || !Array.isArray(this.faturas)) return 0;
-    const total = this.faturas.length;
+    if (!this.todasFaturas || !Array.isArray(this.todasFaturas)) return 0;
+    const total = this.todasFaturas.length;
     if (total === 0) return 0;
     return Math.round((this.getFaturasPorStatus(EFaturaStatus.Paga) / total) * 100);
   }
 
   calcularTrendAtrasadas(): number {
-    if (!this.faturas || !Array.isArray(this.faturas)) return 0;
-    const total = this.faturas.length;
+    if (!this.todasFaturas || !Array.isArray(this.todasFaturas)) return 0;
+    const total = this.todasFaturas.length;
     if (total === 0) return 0;
     return Math.round((this.getFaturasPorStatus(EFaturaStatus.Atrasada) / total) * 100) * -1;
   }
@@ -140,6 +149,7 @@ export class FaturasListComponent implements OnInit {
             });
             
             this.faturas = this.faturas.filter(f => f.id !== fatura.id);
+            this.todasFaturas = this.todasFaturas.filter(f => f.id !== fatura.id);
             this.totalItems = Math.max(0, this.totalItems - 1);
           },
           error: (error) => {
