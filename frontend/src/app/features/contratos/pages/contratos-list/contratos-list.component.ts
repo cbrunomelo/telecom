@@ -29,6 +29,7 @@ import { forkJoin } from 'rxjs';
 })
 export class ContratosListComponent implements OnInit {
   contratos: Contrato[] = [];
+  todosContratos: Contrato[] = [];
   operadoras: Operadora[] = [];
 
   pageSize = 10;
@@ -59,15 +60,20 @@ export class ContratosListComponent implements OnInit {
         
         const contratosData = data.contratos;
         if (contratosData && typeof contratosData === 'object' && 'items' in contratosData && 'total' in contratosData) {
-          this.contratos = contratosData.items;
+          this.todosContratos = contratosData.items;
           this.totalItems = contratosData.total;
+          const start = (this.currentPage - 1) * this.pageSize;
+          const end = start + this.pageSize;
+          this.contratos = this.todosContratos.slice(start, end);
         } else if (Array.isArray(contratosData)) {
+          this.todosContratos = contratosData;
+          this.totalItems = contratosData.length;
           const start = (this.currentPage - 1) * this.pageSize;
           const end = start + this.pageSize;
           this.contratos = contratosData.slice(start, end);
-          this.totalItems = contratosData.length;
         } else {
           this.contratos = [];
+          this.todosContratos = [];
           this.totalItems = 0;
         }
       },
@@ -78,6 +84,7 @@ export class ContratosListComponent implements OnInit {
           panelClass: ['error-snackbar']
         });
         this.contratos = [];
+        this.todosContratos = [];
         this.operadoras = [];
         this.totalItems = 0;
       }
@@ -87,15 +94,17 @@ export class ContratosListComponent implements OnInit {
   onPageChange(event: PageEvent): void {
     this.currentPage = event.pageIndex + 1;
     this.pageSize = event.pageSize;
-    this.carregarContratos();
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    this.contratos = this.todosContratos.slice(start, end);
   }
 
   getTotalContratos(): number {
-    return this.contratos.length;
+    return this.totalItems;
   }
 
   calcularValorTotalMensal(): number {
-    return this.contratos.reduce((total, contrato) => total + contrato.valorMensal, 0);
+    return this.todosContratos.reduce((total, contrato) => total + contrato.valorMensal, 0);
   }
 
   getNomeOperadora(operadoraId: string): string {
@@ -130,6 +139,7 @@ export class ContratosListComponent implements OnInit {
             });
             
             this.contratos = this.contratos.filter(c => c.id !== contrato.id);
+            this.todosContratos = this.todosContratos.filter(c => c.id !== contrato.id);
             this.totalItems = Math.max(0, this.totalItems - 1);
           },
           error: (error) => {
