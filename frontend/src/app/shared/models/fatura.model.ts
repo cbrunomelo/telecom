@@ -1,8 +1,7 @@
 export enum EFaturaStatus {
-  Pendente = 1,
-  Paga = 2,
-  Atrasada = 3,
-  Cancelada = 4
+  Paga = 1,
+  Pendente = 2,
+  Atrasada = 3
 }
 
 export interface Fatura {
@@ -22,8 +21,6 @@ export function getFaturaStatusTexto(status: EFaturaStatus): string {
       return 'Paga';
     case EFaturaStatus.Atrasada:
       return 'Atrasada';
-    case EFaturaStatus.Cancelada:
-      return 'Cancelada';
     default:
       return 'Não definido';
   }
@@ -31,9 +28,8 @@ export function getFaturaStatusTexto(status: EFaturaStatus): string {
 
 export function getFaturaStatusOptions() {
   return [
-    { label: getFaturaStatusTexto(EFaturaStatus.Pendente), value: EFaturaStatus.Pendente },
     { label: getFaturaStatusTexto(EFaturaStatus.Paga), value: EFaturaStatus.Paga },
-    { label: getFaturaStatusTexto(EFaturaStatus.Atrasada), value: EFaturaStatus.Atrasada },
-    { label: getFaturaStatusTexto(EFaturaStatus.Cancelada), value: EFaturaStatus.Cancelada }
+    { label: getFaturaStatusTexto(EFaturaStatus.Pendente), value: EFaturaStatus.Pendente },      
+    { label: getFaturaStatusTexto(EFaturaStatus.Atrasada), value: EFaturaStatus.Atrasada }
   ];
 } 

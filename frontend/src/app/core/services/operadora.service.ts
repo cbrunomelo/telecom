@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Operadora } from '../../shared/models/operadora.model';
 import { ApiService } from './api.service';
 import { PagedData } from '../../shared/models/api-response.model';
+import { map } from 'rxjs/operators';
 
 export interface PagedResult<T> {
   items: T[];

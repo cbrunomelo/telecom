@@ -36,8 +36,7 @@ export class FaturasListComponent implements OnInit {
   private readonly statusClasses: Record<EFaturaStatus, string> = {
     [EFaturaStatus.Paga]: 'badge badge-success',
     [EFaturaStatus.Pendente]: 'badge badge-warning',
-    [EFaturaStatus.Atrasada]: 'badge badge-danger',
-    [EFaturaStatus.Cancelada]: 'badge badge-secondary'
+    [EFaturaStatus.Atrasada]: 'badge badge-danger'
   };
 
   constructor(
