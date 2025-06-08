@@ -11,12 +11,19 @@ COPY . .
 
 RUN npm run build
 
-FROM nginx:alpine
+# Stage 2: Serve with Node.js
+FROM node:20-alpine
 
-COPY nginx.conf /etc/nginx/nginx.conf
+WORKDIR /app
 
-COPY --from=build /app/dist/telecom-frontend  /usr/share/nginx/html
+# Instalar serve globalmente para servir arquivos estáticos
+RUN npm install -g serve
 
-EXPOSE 80
+# Copiar arquivos buildados
+COPY --from=build /app/dist/telecom-frontend ./dist
 
-CMD ["nginx", "-g", "daemon off;"] 
+# Expor porta 4200
+EXPOSE 4200
+
+# Comando para servir a aplicação
+CMD ["serve", "-s", "dist", "-l", "4200"] 
