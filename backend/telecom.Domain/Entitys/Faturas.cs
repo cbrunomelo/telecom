@@ -28,6 +28,15 @@ public class Faturas : EntityBase
         ContratoId = contratoId;
     }
 
+    public Faturas(DateTime dataVencimento, decimal valorCobrado, EFaturaStatus status, Guid contratoId, DateTime dataEmissao)
+    {
+        DateEmissao = dataEmissao;
+        DataVencimento = dataVencimento;
+        ValorCobrado = valorCobrado;
+        Status = status;
+        ContratoId = contratoId;
+    }
+
     public Faturas() { }
 
     public void Atualizar(DateTime dataVencimento, decimal valorCobrado)

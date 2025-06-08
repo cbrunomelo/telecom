@@ -4,7 +4,8 @@ import { ChartConfiguration, ChartType } from 'chart.js';
 import { CardComponent } from '@shared/components/card/card.component';
 import { DashboardChartComponent } from '../../components/dashboard-chart/dashboard-chart.component';
 import { DashboardFiltersComponent } from '../../components/dashboard-filters/dashboard-filters.component';
-import { FaturaService, DashboardFilters } from '../../../../core/services/fatura.service';
+import { DashboardService } from '../../../../core/services/dashboard.service';
+import { DashboardFilters, DashboardData, ApiResponse } from '../../../../shared/models';
 
 @Component({
   selector: 'app-dashboard',
@@ -38,7 +39,7 @@ import { FaturaService, DashboardFilters } from '../../../../core/services/fatur
   `]
 })
 export class DashboardComponent implements OnInit {
-  dashboardData: any;
+  dashboardData: DashboardData | null = null;
   currentFilters: DashboardFilters = {
     periodo: 365,
     operadoraId: undefined,
@@ -102,7 +103,7 @@ export class DashboardComponent implements OnInit {
     }
   };
 
-  constructor(private faturaService: FaturaService) {}
+  constructor(private dashboardService: DashboardService) {}
 
   ngOnInit() {
     this.loadDashboardData();
@@ -110,9 +111,38 @@ export class DashboardComponent implements OnInit {
   }
 
   loadDashboardData() {
-    this.faturaService.getDashboardData(this.currentFilters).subscribe((data: any) => {
-      this.dashboardData = data;
-      this.updateCharts();
+    console.log('Carregando dados do dashboard com filtros:', this.currentFilters);
+    
+    this.dashboardService.getDashboardData(this.currentFilters).subscribe({
+      next: (response: ApiResponse<DashboardData>) => {
+        console.log('Resposta do dashboard recebida:', response);
+        
+        if (response.sucess && response.data) {
+          this.dashboardData = response.data;
+          console.log('Dados do dashboard processados:', this.dashboardData);
+        } else {
+          console.error('Erro na resposta da API:', response.message, response.errors);
+          // Fallback com dados zerados em caso de erro
+          this.dashboardData = {
+            totalFaturas: 0,
+            valorTotalFaturado: 0,
+            faturasStatus: { pagas: 0, pendentes: 0, atrasadas: 0 },
+            evolucaoMensal: []
+          };
+        }
+        this.updateCharts();
+      },
+      error: (error) => {
+        console.error('Erro ao carregar dados do dashboard:', error);
+        // Fallback com dados zerados em caso de erro
+        this.dashboardData = {
+          totalFaturas: 0,
+          valorTotalFaturado: 0,
+          faturasStatus: { pagas: 0, pendentes: 0, atrasadas: 0 },
+          evolucaoMensal: []
+        };
+        this.updateCharts();
+      }
     });
   }
 

@@ -40,6 +40,7 @@ public static class DependencyInjection
         services.AddScoped<IFaturaService, FaturaService>();
         services.AddScoped<IContratoService, ContratoService>();
         services.AddScoped<IOperadoraService, OperadoraService>();
+        services.AddScoped<IDashboardService, DashboardService>();
 
         services.AddAutoMapper(
             typeof(FaturaProfile).Assembly,        

@@ -115,26 +115,34 @@ public static class DatabaseSeeder
         var hoje = DateTime.UtcNow;
         var random = new Random(contrato.Id.GetHashCode());
 
-        for (int i = 11; i >= 0; i--)
+        int quantidadeFaturas = random.Next(5, 15); 
+
+        for (int i = 0; i < quantidadeFaturas; i++)
         {
-            var mesVencimento = hoje.AddMonths(-i);
-            var diaVencimento = 10;
-            
+            int mesesAtras = random.Next(0, 12);
+            var dataBase = hoje.AddMonths(-mesesAtras);
+
+            int dia = random.Next(5, 28);
+
             var dataVencimento = DateTime.SpecifyKind(
-                new DateTime(mesVencimento.Year, mesVencimento.Month, diaVencimento), 
+                new DateTime(dataBase.Year, dataBase.Month, dia),
                 DateTimeKind.Utc);
-            
-            var variacao = (decimal)(random.NextDouble() * 0.2 - 0.1);
+
+            var diasAntes = random.Next(15, 33);
+            var dataEmissao = dataVencimento.AddDays(-diasAntes);
+
+            var variacao = (decimal)(random.NextDouble() * 0.2 - 0.1); 
             var valorFatura = Math.Round(valorBase * (1 + variacao), 2);
 
             var status = DeterminarStatusFatura(dataVencimento, hoje, random);
 
-            var fatura = new Faturas(dataVencimento, valorFatura, status, contrato.Id);
+            var fatura = new Faturas(dataVencimento, valorFatura, status, contrato.Id, dataEmissao);
             faturas.Add(fatura);
         }
 
         return faturas;
     }
+
 
     private static EFaturaStatus DeterminarStatusFatura(DateTime dataVencimento, DateTime hoje, Random random)
     {

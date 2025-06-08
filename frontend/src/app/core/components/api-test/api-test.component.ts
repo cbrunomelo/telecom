@@ -10,8 +10,10 @@ import { HealthService } from '../../services/health.service';
 import { ContratoService } from '../../services/contrato.service';
 import { OperadoraService } from '../../services/operadora.service';
 import { FaturaService } from '../../services/fatura.service';
+import { DashboardService } from '../../services/dashboard.service';
 import { ApiService } from '../../services/api.service';
 import { ApiResponse } from '../../../shared/models/api-response.model';
+import { DashboardData } from '../../../shared/models';
 
 interface TestResult {
   name: string;
@@ -88,6 +90,7 @@ interface TestResult {
               <li>📋 Contratos - Testa endpoint de contratos</li>
               <li>🏢 Operadoras - Testa endpoint de operadoras</li>
               <li>💰 Faturas - Testa endpoint de faturas</li>
+              <li>📊 Dashboard - Testa endpoint do dashboard</li>
             </ul>
 
             <h3>Estrutura de Resposta Esperada:</h3>
@@ -215,6 +218,7 @@ export class ApiTestComponent implements OnInit {
     private contratoService: ContratoService,
     private operadoraService: OperadoraService,
     private faturaService: FaturaService,
+    private dashboardService: DashboardService,
     private apiService: ApiService,
     private snackBar: MatSnackBar
   ) {}
@@ -230,7 +234,8 @@ export class ApiTestComponent implements OnInit {
       { name: 'Health Check', test: () => this.testHealthCheck() },
       { name: 'Contratos API', test: () => this.testContratosAPI() },
       { name: 'Operadoras API', test: () => this.testOperadorasAPI() },
-      { name: 'Faturas API', test: () => this.testFaturasAPI() }
+      { name: 'Faturas API', test: () => this.testFaturasAPI() },
+      { name: 'Dashboard API', test: () => this.testDashboardAPI() }
     ];
 
     for (const testCase of tests) {
@@ -321,6 +326,21 @@ export class ApiTestComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.faturaService.getAll().subscribe({
         next: () => resolve(),
+        error: (error) => reject(error)
+      });
+    });
+  }
+
+  private async testDashboardAPI(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.dashboardService.getDashboardData({ periodo: 365 }).subscribe({
+        next: (response: ApiResponse<DashboardData>) => {
+          if (response.sucess) {
+            resolve();
+          } else {
+            reject(new Error(response.message || 'Teste de dashboard falhou'));
+          }
+        },
         error: (error) => reject(error)
       });
     });

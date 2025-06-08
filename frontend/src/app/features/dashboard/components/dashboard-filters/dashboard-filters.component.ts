@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
-import { DashboardFilters } from '../../../../core/services/fatura.service';
+import { DashboardFilters } from '../../../../shared/models';
 import { OperadoraService } from '../../../../core/services/operadora.service';
 import { EFaturaStatus, getFaturaStatusOptions } from '../../../../shared/models/fatura.model';
 import { Operadora } from '../../../../shared/models/operadora.model';
@@ -33,8 +33,8 @@ export class DashboardFiltersComponent implements OnInit {
     this.filterForm.valueChanges.subscribe(values => {
       const filters: DashboardFilters = {
         periodo: parseInt(values.periodo),
-        operadoraId: values.operadoraId ? parseInt(values.operadoraId) : undefined,
-        status: values.status || undefined
+        operadoraId: values.operadoraId || undefined,
+        status: values.status ? parseInt(values.status) : undefined
       };
       this.filtersChanged.emit(filters);
     });

@@ -3,29 +3,7 @@ import { Observable } from 'rxjs';
 import { Fatura } from '../../shared/models/fatura.model';
 import { ApiService } from './api.service';
 
-export interface DashboardFilters {
-  periodo?: number; // em dias
-  operadoraId?: number;
-  status?: string;
-}
 
-export interface EvolucaoMensal {
-  mes: string;
-  emitidas: number;
-  pagas: number;
-  valor: number;
-}
-
-export interface DashboardData {
-  totalFaturas: number;
-  valorTotalFaturado: number;
-  faturasStatus: {
-    pagas: number;
-    pendentes: number;
-    atrasadas: number;
-  };
-  evolucaoMensal: EvolucaoMensal[];
-}
 
 @Injectable({
   providedIn: 'root'
@@ -83,26 +61,7 @@ export class FaturaService {
     return this.apiService.patch<Fatura>(`/fatura/${id}`, fatura);
   }
 
-  /**
-   * Busca dados do dashboard com filtros
-   */
-  getDashboardData(filters?: DashboardFilters): Observable<DashboardData> {
-    return this.apiService.get<DashboardData>('/fatura/dashboard', filters);
-  }
 
-  /**
-   * Busca evolução mensal das faturas
-   */
-  getEvolucaoMensal(filters?: DashboardFilters): Observable<EvolucaoMensal[]> {
-    return this.apiService.get<EvolucaoMensal[]>('/fatura/evolucao-mensal', filters);
-  }
-
-  /**
-   * Busca faturas com filtros personalizados
-   */
-  getFaturasFiltradas(filters?: DashboardFilters): Observable<Fatura[]> {
-    return this.apiService.get<Fatura[]>('/fatura/filtradas', filters);
-  }
 
   /**
    * Marca uma fatura como paga
