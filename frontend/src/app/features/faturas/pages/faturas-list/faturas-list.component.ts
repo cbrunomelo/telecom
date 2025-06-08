@@ -28,7 +28,6 @@ export class FaturasListComponent implements OnInit {
   faturas: Fatura[] = [];
   EFaturaStatus = EFaturaStatus;
   
-  // Paginação
   pageSize = 10;
   currentPage = 1;
   totalItems = 0;
@@ -52,35 +51,24 @@ export class FaturasListComponent implements OnInit {
   }
 
   carregarFaturas(): void {
-    console.log('Carregando faturas...');
-    
-    // Limpa a lista atual para mostrar que está recarregando
     this.faturas = [];
     
     this.faturaService.getAll().subscribe({
       next: (data: any) => {
-        console.log('Faturas carregadas:', data);
-        
         if (data && typeof data === 'object' && 'items' in data && 'total' in data) {
-          // Resposta com paginação do backend
           this.faturas = data.items;
           this.totalItems = data.total;
-          console.log(`${this.faturas.length} faturas carregadas (paginação)`);
         } else if (Array.isArray(data)) {
-          // Resposta simples (array de faturas) - faz paginação no frontend
           const start = (this.currentPage - 1) * this.pageSize;
           const end = start + this.pageSize;
           this.faturas = data.slice(start, end);
           this.totalItems = data.length;
-          console.log(`${this.faturas.length} faturas carregadas (array simples)`);
         } else {
-          console.warn('Formato de resposta inesperado:', data);
           this.faturas = [];
           this.totalItems = 0;
         }
       },
       error: (error) => {
-        console.error('Erro ao carregar faturas:', error);
         this.snackBar.open('Erro ao carregar faturas: ' + error.message, 'Fechar', {
           duration: 5000,
           horizontalPosition: 'end',
@@ -143,11 +131,8 @@ export class FaturasListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('Iniciando exclusão da fatura:', fatura.id);
-        
         this.faturaService.delete(fatura.id || '').subscribe({
           next: (response) => {
-            console.log('Fatura excluída com sucesso:', response);
             
             this.snackBar.open('Fatura excluída com sucesso', 'Fechar', {
               duration: 3000,
@@ -155,14 +140,10 @@ export class FaturasListComponent implements OnInit {
               panelClass: ['success-snackbar']
             });
             
-            // Remove a fatura da lista local para atualização imediata
             this.faturas = this.faturas.filter(f => f.id !== fatura.id);
             this.totalItems = Math.max(0, this.totalItems - 1);
           },
           error: (error) => {
-            console.error('Erro detalhado ao excluir fatura:', error);
-            
-            // Mensagem de erro mais específica
             let mensagemErro = 'Erro ao excluir fatura';
             if (error.message) {
               mensagemErro = error.message;

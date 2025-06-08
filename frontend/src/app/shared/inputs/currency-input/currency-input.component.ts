@@ -156,7 +156,6 @@ export class CurrencyInputComponent extends BaseInputComponent implements Contro
 
   onBlur(): void {
     this.onTouched();
-    // Garante que o valor está formatado corretamente ao perder o foco
     this.displayValue = this.formatCurrency(this.value);
   }
 
@@ -181,7 +180,6 @@ export class CurrencyInputComponent extends BaseInputComponent implements Contro
 
   private parseValue(value: string): number {
     if (!value) return 0;
-    // Remove todos os caracteres não numéricos, exceto vírgula e ponto
     const cleanValue = value.replace(/[^\d,.-]/g, '').replace(',', '.');
     const numericValue = parseFloat(cleanValue);
     return isNaN(numericValue) ? 0 : numericValue;

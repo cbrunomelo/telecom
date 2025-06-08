@@ -16,10 +16,6 @@ export class DashboardService {
 
   constructor(private apiService: ApiService) {}
 
-  /**
-   * Busca dados completos do dashboard com filtros opcionais
-   * Usa o endpoint único /api/dashboard com query parameters
-   */
   getDashboardData(filters?: DashboardFilters): Observable<ApiResponse<DashboardData>> {
     const params: any = {};
     

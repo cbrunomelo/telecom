@@ -70,11 +70,9 @@ export class FaturaFormComponent implements OnInit {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
   ) {
-    // Lógica simplificada - sem dataPagamento
   }
 
   ngOnInit(): void {
-    // Inicializa sem contratos disponíveis
     this.contratos = [];
     this.contratosOptions = [];
     
@@ -95,7 +93,6 @@ export class FaturaFormComponent implements OnInit {
     ).subscribe({
       next: (fatura) => {
         if (fatura) {
-          // Primeiro carrega o contrato para saber a operadora
           this.contratoService.getById(fatura.contratoId).subscribe({
             next: (contrato) => {
               this.faturaForm.patchValue({
@@ -107,7 +104,6 @@ export class FaturaFormComponent implements OnInit {
                 status: fatura.status
               });
               
-              // Carrega os contratos da operadora
               this.filtrarContratosPorOperadora(contrato.operadoraId);
             },
             error: () => {
@@ -148,7 +144,6 @@ export class FaturaFormComponent implements OnInit {
         }));
       },
       error: (error) => {
-        console.error('Erro ao carregar operadoras:', error);
         this.operadoras = [];
         this.operadorasOptions = [];
       }
@@ -157,17 +152,11 @@ export class FaturaFormComponent implements OnInit {
 
   private setupOperadoraChange(): void {
     this.faturaForm.get('operadoraId')?.valueChanges.subscribe(operadoraId => {
-      console.log('Operadora selecionada:', operadoraId);
-      
-      // Limpa o contrato selecionado quando mudar a operadora
       this.faturaForm.patchValue({ contratoId: '' });
       
       if (operadoraId && operadoraId !== '') {
-        console.log('Filtrando contratos para operadora:', operadoraId);
         this.filtrarContratosPorOperadora(operadoraId);
       } else {
-        // Se não há operadora selecionada, não mostra contratos
-        console.log('Nenhuma operadora selecionada - limpando contratos');
         this.contratos = [];
         this.contratosOptions = [];
       }
@@ -175,12 +164,8 @@ export class FaturaFormComponent implements OnInit {
   }
 
   private filtrarContratosPorOperadora(operadoraId: string): void {
-    console.log('Chamando API para buscar contratos da operadora:', operadoraId);
-    
     this.contratoService.getByOperadora(operadoraId).subscribe({
       next: (contratos: any) => {
-        console.log('Resposta da API para contratos:', contratos);
-        
         if (Array.isArray(contratos)) {
           this.contratos = contratos;
         } else if (contratos && contratos.items) {
@@ -189,25 +174,16 @@ export class FaturaFormComponent implements OnInit {
           this.contratos = [];
         }
         
-        console.log('Contratos filtrados:', this.contratos);
-        console.log('Total de contratos da operadora:', this.contratos.length);
-        
-        // Verifica se os contratos realmente pertencem à operadora selecionada
         const contratosValidos = this.contratos.filter(contrato => 
           contrato.operadoraId === operadoraId || contrato.operadoraId?.toString() === operadoraId.toString()
         );
-        
-        console.log('Contratos válidos após validação:', contratosValidos);
         
         this.contratosOptions = contratosValidos.map(contrato => ({
           label: `${contrato.nomeFilial} - ${contrato.planoContratado}`,
           value: contrato.id
         }));
-        
-        console.log('Opções de contratos criadas:', this.contratosOptions);
       },
       error: (error) => {
-        console.error('Erro ao carregar contratos da operadora:', error);
         this.contratos = [];
         this.contratosOptions = [];
       }
@@ -218,19 +194,13 @@ export class FaturaFormComponent implements OnInit {
     if (this.faturaForm.valid) {
       const formValue = this.faturaForm.getRawValue();
       
-      console.log('Dados do formulário antes do envio:', formValue);
-      console.log('Tipo do status:', typeof formValue.status, 'Valor:', formValue.status);
-      
       const fatura: Partial<Fatura> = {
         contratoId: formValue.contratoId,
         valor: formValue.valor,
         dataVencimento: new Date(formValue.dataVencimento),
         dateEmissao: formValue.dateEmissao ? new Date(formValue.dateEmissao) : new Date(),
-        status: Number(formValue.status) // Converte para número
+        status: Number(formValue.status)
       };
-      
-      console.log('Dados da fatura para envio:', fatura);
-      console.log('Status final:', typeof fatura.status, 'Valor:', fatura.status);
 
       const action = this.isEditing
         ? this.faturaService.update(this.faturaId!, fatura)
@@ -238,7 +208,7 @@ export class FaturaFormComponent implements OnInit {
 
       action.subscribe({
         next: () => {
-          this.validationErrors = []; // Limpa erros de validação em caso de sucesso
+          this.validationErrors = [];
           this.snackBar.open(
             this.isEditing ? 'Fatura atualizada com sucesso' : 'Fatura criada com sucesso',
             'Fechar',
@@ -251,9 +221,6 @@ export class FaturaFormComponent implements OnInit {
           this.router.navigate(['/faturas']);
         },
         error: (error) => {
-          console.error('Erro ao enviar fatura:', error);
-          
-          // Extrai erros de validação da resposta da API
           if (error && error.errors && Array.isArray(error.errors)) {
             this.validationErrors = error.errors;
           } else if (error && error.message) {
@@ -285,7 +252,6 @@ export class FaturaFormComponent implements OnInit {
   }
 
   private setupFormValidationClear(): void {
-    // Limpa erros de validação quando o usuário edita o formulário
     this.faturaForm.valueChanges.subscribe(() => {
       if (this.validationErrors.length > 0) {
         this.validationErrors = [];

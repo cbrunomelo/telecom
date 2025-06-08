@@ -28,7 +28,6 @@ export class OperadorasListComponent implements OnInit {
   operadoras: Operadora[] = [];
   ETipoServicoOperadora = ETipoServicoOperadora;
   
-  // Paginação
   pageSize = 10;
   currentPage = 1;
   totalItems = 0;
@@ -45,50 +44,30 @@ export class OperadorasListComponent implements OnInit {
   }
 
   carregarOperadoras(): void {
-    console.log('Carregando operadoras...');
-    
-    // Limpa a lista atual para mostrar que está recarregando
     this.operadoras = [];
     
     this.operadoraService.getAll().subscribe({
       next: (result: any) => {
-        console.log('Resposta completa da API:', result);
-        console.log('Tipo da resposta:', typeof result);
-        console.log('É array?', Array.isArray(result));
-        
-        // Verifica se result é um array direto ou tem estrutura paginada
         if (Array.isArray(result)) {
-          // Resposta é um array direto
           this.operadoras = result;
           this.totalItems = result.length;
-          console.log(`${this.operadoras.length} operadoras carregadas (array direto)`);
         } else if (result && result.items && Array.isArray(result.items)) {
-          // Resposta tem estrutura paginada
           this.operadoras = result.items;
           this.totalItems = result.total || result.items.length;
-          console.log(`${this.operadoras.length} operadoras carregadas (estrutura paginada)`);
         } else if (result && typeof result === 'object') {
-          // Verifica se result é um objeto com as operadoras em alguma propriedade
-          console.log('Chaves do objeto resultado:', Object.keys(result));
-          
-          // Tenta algumas possibilidades comuns
           if (result.data && Array.isArray(result.data)) {
             this.operadoras = result.data;
             this.totalItems = result.data.length;
-            console.log(`${this.operadoras.length} operadoras carregadas (result.data)`);
           } else {
-            console.error('Estrutura de resposta não reconhecida:', result);
             this.operadoras = [];
             this.totalItems = 0;
           }
         } else {
-          console.error('Resposta inesperada:', result);
           this.operadoras = [];
           this.totalItems = 0;
         }
       },
       error: (error) => {
-        console.error('Erro ao carregar operadoras:', error);
         this.snackBar.open('Erro ao carregar operadoras: ' + error.message, 'Fechar', {
           duration: 5000,
           horizontalPosition: 'end',
@@ -131,11 +110,8 @@ export class OperadorasListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('Iniciando exclusão da operadora:', operadora.id);
-        
         this.operadoraService.delete(operadora.id || '').subscribe({
           next: (response) => {
-            console.log('Operadora excluída com sucesso:', response);
             
             this.snackBar.open('Operadora excluída com sucesso', 'Fechar', {
               duration: 3000,
@@ -143,14 +119,10 @@ export class OperadorasListComponent implements OnInit {
               panelClass: ['success-snackbar']
             });
             
-            // Remove a operadora da lista local para atualização imediata
             this.operadoras = this.operadoras.filter(o => o.id !== operadora.id);
             this.totalItems = Math.max(0, this.totalItems - 1);
           },
           error: (error) => {
-            console.error('Erro detalhado ao excluir operadora:', error);
-            
-            // Mensagem de erro mais específica
             let mensagemErro = 'Erro ao excluir operadora';
             if (error.message) {
               mensagemErro = error.message;

@@ -14,7 +14,6 @@ export interface Fatura {
   dateEmissao?: Date;
 }
 
-// Função utilitária para converter enum em texto
 export function getFaturaStatusTexto(status: EFaturaStatus): string {
   switch (status) {
     case EFaturaStatus.Pendente:
@@ -30,7 +29,6 @@ export function getFaturaStatusTexto(status: EFaturaStatus): string {
   }
 }
 
-// Função para obter opções do select
 export function getFaturaStatusOptions() {
   return [
     { label: getFaturaStatusTexto(EFaturaStatus.Pendente), value: EFaturaStatus.Pendente },

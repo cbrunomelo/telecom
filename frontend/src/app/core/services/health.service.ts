@@ -15,16 +15,10 @@ export class HealthService {
 
   constructor(private apiService: ApiService) {}
 
-  /**
-   * Verifica se a API está funcionando
-   */
   checkHealth(): Observable<HealthCheck> {
     return this.apiService.get<HealthCheck>('/health');
   }
 
-  /**
-   * Testa a conectividade básica com a API
-   */
   ping(): Observable<any> {
     return this.apiService.get<any>('/ping');
   }

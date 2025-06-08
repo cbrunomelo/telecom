@@ -64,7 +64,6 @@ export class ContratoFormComponent implements OnInit {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
   ) {
-    // Propriedades são inicializadas no ngOnInit
   }
 
   ngOnInit(): void {
@@ -74,13 +73,11 @@ export class ContratoFormComponent implements OnInit {
         if (id) {
           this.isEditing = true;
           this.contratoId = id;
-          // Carrega contrato e operadoras simultaneamente
           return forkJoin({
             contrato: this.contratoService.getById(id),
             operadoras: this.operadoraService.getAll()
           });
         }
-        // Se não for edição, só carrega as operadoras
         return forkJoin({
           contrato: of(null),
           operadoras: this.operadoraService.getAll()
@@ -88,23 +85,14 @@ export class ContratoFormComponent implements OnInit {
       })
     ).subscribe({
       next: ({ contrato, operadoras }) => {
-        console.log('Dados carregados:', { contrato, operadoras });
-        console.log('Estrutura operadoras:', operadoras);
-        
-        // Configura as operadoras disponíveis - trata diferentes estruturas de resposta
         const operadorasData = operadoras as any;
         if (Array.isArray(operadorasData)) {
-          // Se operadoras é um array direto
           this.operadoras = operadorasData;
         } else if (operadorasData && operadorasData.items && Array.isArray(operadorasData.items)) {
-          // Se operadoras tem a propriedade items
           this.operadoras = operadorasData.items;
         } else if (operadorasData && operadorasData.data && Array.isArray(operadorasData.data)) {
-          // Se operadoras tem a propriedade data
           this.operadoras = operadorasData.data;
         } else {
-          // Fallback - array vazio
-          console.error('Estrutura de operadoras não reconhecida:', operadoras);
           this.operadoras = [];
         }
         
@@ -113,12 +101,7 @@ export class ContratoFormComponent implements OnInit {
           value: operadora.id || ''
         }));
         
-        console.log('Operadoras processadas:', this.operadoras);
-        console.log('Operadoras options:', this.operadorasOptions);
-        
         if (contrato && typeof contrato === 'object') {
-          console.log('Preenchendo formulário com contrato:', contrato);
-          
           try {
             this.contratoForm.patchValue({
               nomeFilial: contrato.nomeFilial || '',
@@ -129,27 +112,20 @@ export class ContratoFormComponent implements OnInit {
               valorMensal: contrato.valorMensal || 0
             });
             
-            console.log('Operadora selecionada:', contrato.operadoraId);
-            console.log('Operadoras disponíveis:', (this.operadoras || []).map(op => ({ id: op.id, nome: op.nome })));
-            
-            // Força a atualização do select após um pequeno delay para garantir que as opções estejam carregadas
             setTimeout(() => {
               if (contrato.operadoraId) {
                 this.contratoForm.patchValue({
                   operadoraId: contrato.operadoraId
                 });
-                console.log('Operadora forçada:', contrato.operadoraId);
               }
             }, 100);
           } catch (error) {
-            console.error('Erro ao preencher formulário:', error);
           }
         }
         
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Erro ao carregar dados:', error);
         this.isLoading = false;
         this.snackBar.open('Erro ao carregar dados', 'Fechar', {
           duration: 3000,
@@ -161,7 +137,6 @@ export class ContratoFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // Limpa erros de validação anteriores
     this.validationErrors = [];
     
     if (this.contratoForm.valid) {
@@ -190,7 +165,6 @@ export class ContratoFormComponent implements OnInit {
           this.router.navigate(['/contratos']);
         },
         error: (error) => {
-          // Captura erros de validação da API
           this.extractValidationErrors(error);
           
           this.snackBar.open(
@@ -222,19 +196,15 @@ export class ContratoFormComponent implements OnInit {
     this.validationErrors = [];
     
     try {
-      // Tenta extrair erros do formato ApiResponse (HandleResult)
       if (error.error && error.error.errors && Array.isArray(error.error.errors)) {
         this.validationErrors = error.error.errors;
       }
-      // Tenta extrair erros de outras possíveis estruturas
       else if (error.errors && Array.isArray(error.errors)) {
         this.validationErrors = error.errors;
       }
-      // Se for uma string simples
       else if (typeof error.message === 'string') {
         this.validationErrors = [error.message];
       }
-      // Fallback para erro genérico
       else {
         this.validationErrors = ['Ocorreu um erro ao processar a solicitação'];
       }

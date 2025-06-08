@@ -144,10 +144,9 @@ export class PhoneInputComponent extends BaseInputComponent implements ControlVa
 
   formatPhoneNumber(event: Event): void {
     const input = event.target as HTMLInputElement;
-    let value = input.value.replace(/\D/g, ''); // Remove tudo que não é número
+    let value = input.value.replace(/\D/g, '');
     
     if (value.startsWith('0800')) {
-      // Formato: 0800 000 0000
       if (value.length > 11) value = value.substring(0, 11);
       if (value.length > 7) {
         value = value.substring(0, 4) + ' ' + 
@@ -158,7 +157,6 @@ export class PhoneInputComponent extends BaseInputComponent implements ControlVa
                 value.substring(4);
       }
     } else {
-      // Formato: (00) 00000-0000
       if (value.length > 11) value = value.substring(0, 11);
       if (value.length > 7) {
         value = '(' + value.substring(0, 2) + ') ' +

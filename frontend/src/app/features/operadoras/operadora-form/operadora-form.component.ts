@@ -76,7 +76,7 @@ export class OperadoraFormComponent implements OnInit {
       if (operadora) {
         this.operadoraForm.patchValue({
           nome: operadora.nome,
-          eTipoServicoOperadora: Number(operadora.eTipoServicoOperadora), // Garante que seja número
+          eTipoServicoOperadora: Number(operadora.eTipoServicoOperadora),
           contatoSuporte: operadora.contatoSuporte
         });
       }
@@ -84,19 +84,17 @@ export class OperadoraFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // Limpa erros anteriores
     this.validationErrors = [];
 
     if (this.operadoraForm.valid) {
       const formValue = this.operadoraForm.getRawValue();
       const operadora: Partial<Operadora> = {
         nome: formValue.nome,
-        eTipoServicoOperadora: Number(formValue.eTipoServicoOperadora), // Converte para número
+        eTipoServicoOperadora: Number(formValue.eTipoServicoOperadora),
         contatoSuporte: formValue.contatoSuporte
       };
 
-      console.log('Dados da operadora sendo enviados:', operadora);
-      console.log('Tipo do eTipoServicoOperadora:', typeof operadora.eTipoServicoOperadora);
+
 
       const action = this.isEditing
         ? this.operadoraService.update(this.operadoraId!, operadora as Operadora)
@@ -116,9 +114,6 @@ export class OperadoraFormComponent implements OnInit {
           this.router.navigate(['/operadoras']);
         },
         error: (error) => {
-          console.error('Erro ao salvar operadora:', error);
-          
-          // Extrai erros de validação da API
           if (error.message && error.message.includes(':')) {
             const errorParts = error.message.split(':');
             if (errorParts.length > 1) {
@@ -129,7 +124,6 @@ export class OperadoraFormComponent implements OnInit {
             this.validationErrors = [error.message || 'Erro ao salvar operadora'];
           }
 
-          // Mostra snackbar apenas se não houver erros de validação específicos
           if (this.validationErrors.length === 0) {
             this.snackBar.open(
               this.isEditing ? 'Erro ao atualizar operadora' : 'Erro ao criar operadora',
@@ -144,7 +138,6 @@ export class OperadoraFormComponent implements OnInit {
         }
       });
     } else {
-      // Marca todos os campos como touched para mostrar os erros
       Object.keys(this.operadoraForm.controls).forEach(key => {
         this.operadoraForm.get(key)?.markAsTouched();
       });

@@ -11,7 +11,6 @@ export interface Operadora {
   contatoSuporte: string;
 }
 
-// Função utilitária para converter enum em texto
 export function getTipoServicoTexto(tipo: ETipoServicoOperadora): string {
   switch (tipo) {
     case ETipoServicoOperadora.Movel:

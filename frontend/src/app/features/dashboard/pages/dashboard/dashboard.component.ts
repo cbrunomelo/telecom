@@ -46,7 +46,6 @@ export class DashboardComponent implements OnInit {
     status: undefined
   };
 
-  // Configurações do gráfico de pizza
   pieChartType: ChartType = 'pie';
   pieChartData: ChartConfiguration['data'] = {
     labels: [],
@@ -54,7 +53,6 @@ export class DashboardComponent implements OnInit {
   };
   pieChartOptions: ChartConfiguration['options'] = {};
 
-  // Configurações do gráfico de barras
   barChartType: ChartType = 'bar';
   barChartData: ChartConfiguration['data'] = {
     labels: [],
@@ -111,18 +109,11 @@ export class DashboardComponent implements OnInit {
   }
 
   loadDashboardData() {
-    console.log('Carregando dados do dashboard com filtros:', this.currentFilters);
-    
     this.dashboardService.getDashboardData(this.currentFilters).subscribe({
       next: (response: ApiResponse<DashboardData>) => {
-        console.log('Resposta do dashboard recebida:', response);
-        
         if (response.sucess && response.data) {
           this.dashboardData = response.data;
-          console.log('Dados do dashboard processados:', this.dashboardData);
         } else {
-          console.error('Erro na resposta da API:', response.message, response.errors);
-          // Fallback com dados zerados em caso de erro
           this.dashboardData = {
             totalFaturas: 0,
             valorTotalFaturado: 0,
@@ -133,8 +124,6 @@ export class DashboardComponent implements OnInit {
         this.updateCharts();
       },
       error: (error) => {
-        console.error('Erro ao carregar dados do dashboard:', error);
-        // Fallback com dados zerados em caso de erro
         this.dashboardData = {
           totalFaturas: 0,
           valorTotalFaturado: 0,

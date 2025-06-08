@@ -31,7 +31,6 @@ export class ContratosListComponent implements OnInit {
   contratos: Contrato[] = [];
   operadoras: Operadora[] = [];
 
-  // Paginação
   pageSize = 10;
   currentPage = 1;
   totalItems = 0;
@@ -49,9 +48,6 @@ export class ContratosListComponent implements OnInit {
   }
 
   carregarContratos(): void {
-    console.log('Carregando contratos...');
-    
-    // Limpa a lista atual para mostrar que está recarregando
     this.contratos = [];
     
     forkJoin({
@@ -59,30 +55,23 @@ export class ContratosListComponent implements OnInit {
       operadoras: this.operadoraService.getAll()
     }).subscribe({
       next: (data: any) => {
-        console.log('Dados carregados:', data);
-        
         this.operadoras = data.operadoras || [];
         
         const contratosData = data.contratos;
         if (contratosData && typeof contratosData === 'object' && 'items' in contratosData && 'total' in contratosData) {
           this.contratos = contratosData.items;
           this.totalItems = contratosData.total;
-          console.log(`${this.contratos.length} contratos carregados (paginação)`);
         } else if (Array.isArray(contratosData)) {
-          // Resposta simples (array de contratos) - faz paginação no frontend
           const start = (this.currentPage - 1) * this.pageSize;
           const end = start + this.pageSize;
           this.contratos = contratosData.slice(start, end);
           this.totalItems = contratosData.length;
-          console.log(`${this.contratos.length} contratos carregados (array simples)`);
         } else {
-          console.warn('Formato de resposta inesperado:', contratosData);
           this.contratos = [];
           this.totalItems = 0;
         }
       },
       error: (error) => {
-        console.error('Erro ao carregar dados:', error);
         this.snackBar.open('Erro ao carregar dados: ' + error.message, 'Fechar', {
           duration: 5000,
           horizontalPosition: 'end',
@@ -131,12 +120,8 @@ export class ContratosListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('Iniciando exclusão do contrato:', contrato.id);
-        
         this.contratoService.delete(contrato.id || '').subscribe({
           next: (response) => {
-            console.log('Contrato excluído com sucesso:', response);
-            console.log('Recarregando lista...');
             
             this.snackBar.open('Contrato excluído com sucesso', 'Fechar', {
               duration: 3000,
@@ -144,16 +129,10 @@ export class ContratosListComponent implements OnInit {
               panelClass: ['success-snackbar']
             });
             
-            // Remove o contrato da lista local para atualização imediata
             this.contratos = this.contratos.filter(c => c.id !== contrato.id);
             this.totalItems = Math.max(0, this.totalItems - 1);
           },
           error: (error) => {
-            console.error('Erro detalhado ao excluir contrato:', error);
-            console.error('Tipo do erro:', typeof error);
-            console.error('Stack trace:', error.stack);
-            
-            // Mensagem de erro mais específica
             let mensagemErro = 'Erro ao excluir contrato';
             if (error.message) {
               mensagemErro = error.message;

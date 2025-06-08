@@ -22,7 +22,6 @@ export class ConfirmDialogComponent {
     public dialogRef: MatDialogRef<ConfirmDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData
   ) {
-    // Adiciona a classe para o backdrop
     this.dialogRef.addPanelClass('blur-dialog-backdrop');
   }
 

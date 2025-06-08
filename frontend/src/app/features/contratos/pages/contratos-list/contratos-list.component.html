@@ -53,12 +53,12 @@
     </tbody>
   </table>
 
-  <!-- Mensagem quando não há contratos -->
+  
   <div *ngIf="contratos.length === 0" class="text-center mt-4">
     <p class="text-muted">Nenhum contrato encontrado.</p>
   </div>
 
-  <!-- Paginador -->
+  
   <mat-paginator
     [length]="totalItems"
     [pageSize]="pageSize"

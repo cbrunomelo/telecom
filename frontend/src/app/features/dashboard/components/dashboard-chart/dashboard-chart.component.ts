@@ -20,7 +20,6 @@ export class DashboardChartComponent implements OnInit {
   @Input() chartOptions: ChartConfiguration['options'] = {};
 
   ngOnInit() {
-    // Configurações globais do Chart.js
     const defaults = Chart.defaults;
     if (defaults.font) {
       defaults.font.family = "'Inter', sans-serif";

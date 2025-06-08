@@ -1,7 +1,7 @@
 <div class="container mt-4">
   <h2>{{ isEditing ? 'Editar' : 'Nova' }} Operadora</h2>
 
-  <!-- Componente de erros de validação -->
+  
   <app-validation-errors 
     *ngIf="validationErrors.length > 0"
     [errors]="validationErrors"
